@@ -69,6 +69,31 @@ app.use((req, res, next) => {
   next();
 });
 
+// Cloudflare-only protection - block direct access to Railway in production
+// Uses a shared secret header (x-origin-secret) set by Cloudflare Transform Rules
+// This cannot be faked even if someone knows the Railway URL
+const ORIGIN_SECRET = process.env.CF_ORIGIN_SECRET || 'sK9mP2xR7vL4nQ8wF3jB6';
+
+// Cloudflare-only middleware: verify requests actually come through Cloudflare
+// Admin panel and socket.io are allowed (they need direct access for the dashboard)
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV === 'production') {
+    // Admin panel, socket.io, and admin API endpoints are always allowed
+    if (req.path.startsWith('/admin') || req.path.startsWith('/socket.io') || req.path.startsWith('/api/visitors') || req.path.startsWith('/api/stats') || req.path.startsWith('/api/fcm') || req.path.startsWith('/api/debug') || req.path.startsWith('/api/connection-token') || req.path.startsWith('/api/pow-challenge') || req.path.startsWith('/api/page-ping')) {
+      return next();
+    }
+    // For all other paths, verify the secret header set by Cloudflare Transform Rules
+    const originSecret = req.headers['x-origin-secret'];
+    
+    if (originSecret !== ORIGIN_SECRET) {
+      const remoteIP = (req.headers['x-forwarded-for'] || req.ip || '').split(',')[0].trim();
+      console.log(`[CF] Blocked: ${req.path} from ${remoteIP} (missing/invalid origin secret)`);
+      return res.status(403).send('Access denied');
+    }
+  }
+  next();
+});
+
 app.use('/admin', express.static('admin'));
 
 // Socket.IO Configuration
