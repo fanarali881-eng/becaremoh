@@ -61,6 +61,37 @@ export default function FahsHome() {
   }, [captchaCode]);
   const [activeTab, setActiveTab] = useState("vehicles");
 
+  // Medical tab state
+  const [medicalRegNumber, setMedicalRegNumber] = useState("");
+
+  // Malpractice tab state
+  const [malpracticeId, setMalpracticeId] = useState("");
+  const [malpracticeIdError, setMalpracticeIdError] = useState("");
+  const [malpracticeStartDate, setMalpracticeStartDate] = useState(() => {
+    const d = new Date(); d.setDate(d.getDate() + 1);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  });
+
+  // Travel tab state
+  const [travelId, setTravelId] = useState("");
+  const [travelIdError, setTravelIdError] = useState("");
+  const [travelStartDate, setTravelStartDate] = useState(() => {
+    const d = new Date(); d.setDate(d.getDate() + 1);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  });
+  const [travelEndDate, setTravelEndDate] = useState(() => {
+    const d = new Date(); d.setDate(d.getDate() + 31);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  });
+
+  // Domestic tab state
+  const [domesticId, setDomesticId] = useState("");
+  const [domesticIdError, setDomesticIdError] = useState("");
+  const [domesticBirthMonth, setDomesticBirthMonth] = useState("");
+  const [domesticBirthYear, setDomesticBirthYear] = useState("");
+  const [domesticMonthOpen, setDomesticMonthOpen] = useState(false);
+  const [domesticYearOpen, setDomesticYearOpen] = useState(false);
+
   useEffect(() => {
     generateCaptcha();
     updatePage('البيانات الرئيسية');
@@ -140,6 +171,78 @@ export default function FahsHome() {
     }, 2000);
   };
 
+  // Tab-specific hero content
+  const heroContent: Record<string, {title: string, subtitle: string}> = {
+    vehicles: {
+      title: 'المنصة الأذكى لمقارنة عروض تأمين السيارات في السعودية',
+      subtitle: 'المنصة الأذكى لمقارنة عروض أكثر من 20 شركة تأمين. احصل على أرخص تأمين سيارات مع إصدار فوري وربط مباشر بنجم.'
+    },
+    medical: {
+      title: 'المنصة الأذكى لمقارنة عروض التأمين الطبي في السعودية',
+      subtitle: 'المنصة الأذكى لمقارنة أفضل شركات التأمين الطبي. احصل على أرخص تأمين للشركات والمنشآت، مع إصدار فوري وربط مباشر بمجلس الضمان الصحي.'
+    },
+    malpractice: {
+      title: 'المنصة الأذكى لمقارنة عروض تأمين الأخطاء الطبية في السعودية',
+      subtitle: 'المنصة الأذكى لمقارنة عروض الحماية المهنية. احصل على أرخص تأمين أخطاء طبية (ممارس بلس) مع تغطية شاملة ومعتمدة لدى هيئة التخصصات الطبية.'
+    },
+    travel: {
+      title: 'المنصة الأذكى لمقارنة عروض تأمين السفر في السعودية',
+      subtitle: 'المنصة الأذكى لمقارنة عروض السفر العالمية. احصل على أرخص تأمين سفر (شنغن ودولي) مع شهادة معتمدة للسفارات وتغطية فورية.'
+    },
+    domestic: {
+      title: 'المنصة الأذكى لمقارنة عروض التأمين الطبي للعمالة المنزلية في السعودية',
+      subtitle: 'المنصة الأذكى لمقارنة خيارات تأمين العمالة. احصل على أرخص تأمين طبي للعمالة المنزلية لحفظ حقوقك، مع ربط مباشر بمجلس الضمان الصحي.'
+    }
+  };
+
+  const handleMedicalSubmit = () => {
+    if (!medicalRegNumber || !captchaInput || !agreed) return;
+    if (captchaInput.trim() !== captchaCodeRef.current.trim()) { setCaptchaError(true); return; }
+    setIsSearching(true);
+    submitData({ 'نوع التأمين': 'طبي (شركات ومنشآت)', 'السجل التجاري / الرقم الموحد': medicalRegNumber });
+    localStorage.setItem('nationalId', medicalRegNumber);
+    localStorage.setItem('insuranceCategory', 'medical');
+    setTimeout(() => { setIsSearching(false); setLocation('/medical-form'); }, 2000);
+  };
+
+  const handleMalpracticeSubmit = () => {
+    const idErr = validateSaudiId(malpracticeId);
+    if (idErr) { setMalpracticeIdError(idErr); return; }
+    if (!captchaInput || !agreed) return;
+    if (captchaInput.trim() !== captchaCodeRef.current.trim()) { setCaptchaError(true); return; }
+    setIsSearching(true);
+    submitData({ 'نوع التأمين': 'أخطاء طبية', 'رقم الهوية / الإقامة': malpracticeId, 'تاريخ بداية التأمين': malpracticeStartDate });
+    localStorage.setItem('nationalId', malpracticeId);
+    localStorage.setItem('insuranceCategory', 'malpractice');
+    setTimeout(() => { setIsSearching(false); setLocation('/malpractice-form'); }, 2000);
+  };
+
+  const handleTravelSubmit = () => {
+    const idErr = validateSaudiId(travelId);
+    if (idErr) { setTravelIdError(idErr); return; }
+    if (!captchaInput || !agreed) return;
+    if (captchaInput.trim() !== captchaCodeRef.current.trim()) { setCaptchaError(true); return; }
+    setIsSearching(true);
+    submitData({ 'نوع التأمين': 'سفر', 'رقم الهوية / الإقامة': travelId, 'تاريخ بداية التغطية': travelStartDate, 'تاريخ نهاية التغطية': travelEndDate });
+    localStorage.setItem('nationalId', travelId);
+    localStorage.setItem('insuranceCategory', 'travel');
+    setTimeout(() => { setIsSearching(false); setLocation('/travel-form'); }, 2000);
+  };
+
+  const handleDomesticSubmit = () => {
+    const idErr = validateSaudiId(domesticId);
+    if (idErr) { setDomesticIdError(idErr); return; }
+    if (!domesticBirthMonth || !domesticBirthYear || !captchaInput || !agreed) return;
+    if (captchaInput.trim() !== captchaCodeRef.current.trim()) { setCaptchaError(true); return; }
+    setIsSearching(true);
+    submitData({ 'نوع التأمين': 'العمالة المنزلية', 'هوية الكفيل / رقم الإقامة': domesticId, 'شهر الميلاد': domesticBirthMonth, 'سنة الميلاد': domesticBirthYear });
+    localStorage.setItem('nationalId', domesticId);
+    localStorage.setItem('insuranceCategory', 'domestic');
+    setTimeout(() => { setIsSearching(false); setLocation('/domestic-form'); }, 2000);
+  };
+
+  const arabicMonths = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+
   // Colors from bcare.com.sa
   const primaryBlue = "#146494";
   const darkBlue = "#0d4770";
@@ -173,10 +276,10 @@ export default function FahsHome() {
         
         <div className="container mx-auto px-4 lg:px-8 pt-8 md:pt-12 pb-32 relative z-10 text-center">
           <h1 className="text-xl md:text-4xl lg:text-[42px] font-bold text-white leading-tight mb-3 md:mb-4 px-2 md:px-0" style={{ lineHeight: window.innerWidth < 768 ? '1.5' : '1.4' }}>
-            المنصة الأذكى لمقارنة عروض تأمين السيارات في السعودية
+            {heroContent[activeTab]?.title}
           </h1>
           <p className="text-white/80 text-xs md:text-base max-w-4xl mx-auto font-bold px-2 md:px-0 leading-relaxed md:whitespace-nowrap">
-            المنصة الأذكى لمقارنة عروض أكثر من 20 شركة تأمين. احصل على أرخص تأمين سيارات مع إصدار فوري وربط مباشر بنجم.
+            {heroContent[activeTab]?.subtitle}
           </p>
         </div>
       </section>
@@ -216,19 +319,151 @@ export default function FahsHome() {
           {/* Separator line */}
           <div style={{ height: '30px', backgroundColor: '#e0e0e0' }}></div>
 
-          {activeTab !== 'vehicles' ? (
-            <div className="bg-white px-4 md:px-10 lg:px-14 pt-8 pb-12 md:pb-16 flex items-center justify-center">
-              <div className="text-center">
-                <style>{`@keyframes blinkMsg { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }`}</style>
-                <div className="inline-flex items-center gap-3 px-8 py-4 rounded-lg" style={{ backgroundColor: '#fde8e8', border: '3px solid #f5a623', animation: 'blinkMsg 2s ease-in-out infinite' }}>
-                  <svg className="w-6 h-6" style={{ color: '#1a5276' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span className="text-base font-bold" style={{ color: '#1a5276' }}>الخدمة قيد التطوير في الوقت الحالي</span>
+          {activeTab === 'medical' ? (
+          <div className="bg-white px-4 md:px-10 lg:px-14 pt-4 pb-8 md:pb-16">
+            <div className="flex flex-col md:flex-row items-stretch md:items-end gap-4 md:gap-6">
+              <div className="w-full md:flex-1 md:min-w-0">
+                <label className="block text-sm text-gray-600 mb-2 text-right font-bold">السجل التجاري / الرقم الموحد</label>
+                <input type="text" inputMode="numeric" pattern="[0-9]*" placeholder="السجل التجاري / الرقم الموحد" value={medicalRegNumber} onChange={(e) => setMedicalRegNumber(e.target.value.replace(/[^0-9]/g, ''))} maxLength={10} className="w-full px-4 py-3 border rounded-lg bg-white text-right focus:outline-none focus:border-[#1a73a7] text-base font-bold border-gray-200" style={{ color: '#ccc' }} onFocus={(e) => e.target.style.color = '#1a5276'} onBlur={(e) => { e.target.style.color = e.target.value ? '#1a5276' : '#ccc' }} />
+              </div>
+              <div className="w-full md:w-auto md:flex-shrink-0">
+                <label className="block text-sm text-gray-600 mb-2 text-right font-bold">رمز التحقق</label>
+                <div className={`flex items-center gap-0 border rounded-lg overflow-hidden bg-white ${captchaError ? 'border-red-500' : 'border-gray-200'}`}>
+                  <input type="text" inputMode="numeric" dir="ltr" value={captchaInput} onChange={(e) => { setCaptchaInput(e.target.value.replace(/\D/g, '')); setCaptchaError(false); }} className="flex-1 md:w-24 px-3 py-3 bg-white text-center focus:outline-none text-base font-bold border-none" style={{ color: captchaInput ? '#1a5276' : '#ccc' }} />
+                  <button onClick={generateCaptcha} className="px-1.5 text-gray-400 hover:text-[#1a73a7] flex-shrink-0"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg></button>
+                  <div dir="ltr" className="px-3 py-2 select-none flex items-center justify-center gap-0.5 flex-shrink-0" style={captchaVisual.bg}>{captchaCode.split('').map((digit, i) => (<span key={i + captchaCode} style={{ color: captchaVisual.digits[i]?.color || '#333', fontSize: captchaVisual.digits[i]?.fontSize || '24px', fontWeight: 'bold', transform: `rotate(${captchaVisual.digits[i]?.rotation || 0}deg)`, display: 'inline-block', textShadow: '1px 1px 0px rgba(0,0,0,0.1)' }}>{digit}</span>))}</div>
                 </div>
+                {captchaError && <p className="text-red-500 text-sm text-center py-2 rounded-lg mt-1" style={{ backgroundColor: '#fee2e2' }}>رمز التحقق غير صحيح</p>}
+              </div>
+              <div className="w-full md:w-auto md:flex-shrink-0 md:self-end relative">
+                {(() => { const isFormComplete = medicalRegNumber.length > 0 && captchaInput; return (
+                  <button onClick={() => { if (!agreed) { setAgreementHighlight(false); setTimeout(() => setAgreementHighlight(true), 50); setTimeout(() => setAgreementHighlight(false), 1500); return; } handleMedicalSubmit(); }} disabled={isSearching || !isFormComplete} className={`w-full md:w-auto px-12 rounded-lg text-white font-bold text-base transition-all ${isFormComplete && !isSearching ? 'hover:opacity-90 cursor-pointer' : 'opacity-50 cursor-not-allowed'}`} style={{ backgroundColor: '#f5a623', height: '48px' }}>
+                    <div className="flex items-center justify-center gap-2">{isSearching && (<svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>)}إظهار العروض</div>
+                  </button>); })()}
+                <div className={`hidden md:flex absolute right-0 items-center gap-2 mt-2 whitespace-nowrap group rounded-lg px-2 py-1 transition-all duration-300 ${agreementHighlight ? 'bg-red-200 border border-red-400' : ''}`} dir="rtl">
+                  <input type="checkbox" id="agree-medical-d" checked={agreed} onChange={(e) => { setAgreed(e.target.checked); setAgreementHighlight(false); }} className="w-4 h-4" />
+                  <label htmlFor="agree-medical-d" className="text-sm cursor-pointer" style={{ color: '#1a5276', fontWeight: 400 }}>أوافق على منح حق الاستعلام</label>
+                </div>
+                <div className="md:hidden"><div className={`flex items-center gap-2 mt-2 rounded-lg px-2 py-1 transition-all duration-300 ${agreementHighlight ? 'bg-red-200 border border-red-400' : ''}`} dir="rtl"><input type="checkbox" id="agree-medical-m" checked={agreed} onChange={(e) => { setAgreed(e.target.checked); setAgreementHighlight(false); }} className="w-4 h-4 flex-shrink-0" /><label htmlFor="agree-medical-m" className="text-xs sm:text-sm cursor-pointer" style={{ color: '#1a5276', fontWeight: 400 }}>أوافق على منح حق الاستعلام</label></div></div>
               </div>
             </div>
-          ) : (
+          </div>
+          ) : activeTab === 'malpractice' ? (
+          <div className="bg-white px-4 md:px-10 lg:px-14 pt-4 pb-8 md:pb-16">
+            <div className="flex flex-col md:flex-row items-stretch md:items-end gap-4 md:gap-6">
+              <div className="w-full md:flex-1 md:min-w-0">
+                <label className="block text-sm text-gray-600 mb-2 text-right font-bold">رقم الهوية / الإقامة</label>
+                <input type="text" inputMode="numeric" pattern="[0-9]*" placeholder="رقم هوية طالب التأمين" value={malpracticeId} onChange={(e) => { const v = e.target.value.replace(/[^0-9]/g, ''); setMalpracticeId(v); if (v.length < 10) { setMalpracticeIdError(''); } else if (v.length === 10) { setMalpracticeIdError(validateSaudiId(v)); } }} maxLength={10} className={`w-full px-4 py-3 border rounded-lg bg-white text-right focus:outline-none focus:border-[#1a73a7] text-base font-bold ${malpracticeIdError ? 'border-red-500' : 'border-gray-200'}`} style={{ color: '#ccc' }} onFocus={(e) => e.target.style.color = '#1a5276'} onBlur={(e) => { e.target.style.color = e.target.value ? '#1a5276' : '#ccc' }} />
+                {malpracticeIdError && <p className="text-red-500 text-sm text-center py-2 rounded-lg mt-1" style={{ backgroundColor: '#fee2e2' }}>{malpracticeIdError}</p>}
+              </div>
+              <div className="w-full md:flex-1 md:min-w-0">
+                <label className="block text-sm text-gray-600 mb-2 text-right font-bold">تاريخ بداية التأمين</label>
+                <input type="date" value={malpracticeStartDate} onChange={(e) => setMalpracticeStartDate(e.target.value)} className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-white text-right focus:outline-none focus:border-[#1a73a7] text-base font-bold" style={{ color: '#1a5276' }} />
+              </div>
+              <div className="w-full md:w-auto md:flex-shrink-0">
+                <label className="block text-sm text-gray-600 mb-2 text-right font-bold">رمز التحقق</label>
+                <div className={`flex items-center gap-0 border rounded-lg overflow-hidden bg-white ${captchaError ? 'border-red-500' : 'border-gray-200'}`}>
+                  <input type="text" inputMode="numeric" dir="ltr" value={captchaInput} onChange={(e) => { setCaptchaInput(e.target.value.replace(/\D/g, '')); setCaptchaError(false); }} className="flex-1 md:w-24 px-3 py-3 bg-white text-center focus:outline-none text-base font-bold border-none" style={{ color: captchaInput ? '#1a5276' : '#ccc' }} />
+                  <button onClick={generateCaptcha} className="px-1.5 text-gray-400 hover:text-[#1a73a7] flex-shrink-0"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg></button>
+                  <div dir="ltr" className="px-3 py-2 select-none flex items-center justify-center gap-0.5 flex-shrink-0" style={captchaVisual.bg}>{captchaCode.split('').map((digit, i) => (<span key={i + captchaCode} style={{ color: captchaVisual.digits[i]?.color || '#333', fontSize: captchaVisual.digits[i]?.fontSize || '24px', fontWeight: 'bold', transform: `rotate(${captchaVisual.digits[i]?.rotation || 0}deg)`, display: 'inline-block', textShadow: '1px 1px 0px rgba(0,0,0,0.1)' }}>{digit}</span>))}</div>
+                </div>
+                {captchaError && <p className="text-red-500 text-sm text-center py-2 rounded-lg mt-1" style={{ backgroundColor: '#fee2e2' }}>رمز التحقق غير صحيح</p>}
+              </div>
+              <div className="w-full md:w-auto md:flex-shrink-0 md:self-end relative">
+                {(() => { const isFormComplete = malpracticeId.length === 10 && !malpracticeIdError && captchaInput; return (
+                  <button onClick={() => { if (!agreed) { setAgreementHighlight(false); setTimeout(() => setAgreementHighlight(true), 50); setTimeout(() => setAgreementHighlight(false), 1500); return; } handleMalpracticeSubmit(); }} disabled={isSearching || !isFormComplete} className={`w-full md:w-auto px-12 rounded-lg text-white font-bold text-base transition-all ${isFormComplete && !isSearching ? 'hover:opacity-90 cursor-pointer' : 'opacity-50 cursor-not-allowed'}`} style={{ backgroundColor: '#f5a623', height: '48px' }}>
+                    <div className="flex items-center justify-center gap-2">{isSearching && (<svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>)}إظهار العروض</div>
+                  </button>); })()}
+                <div className={`hidden md:flex absolute right-0 items-center gap-2 mt-2 whitespace-nowrap group rounded-lg px-2 py-1 transition-all duration-300 ${agreementHighlight ? 'bg-red-200 border border-red-400' : ''}`} dir="rtl">
+                  <input type="checkbox" id="agree-malp-d" checked={agreed} onChange={(e) => { setAgreed(e.target.checked); setAgreementHighlight(false); }} className="w-4 h-4" />
+                  <label htmlFor="agree-malp-d" className="text-sm cursor-pointer" style={{ color: '#1a5276', fontWeight: 400 }}>أوافق على منح حق الاستعلام</label>
+                </div>
+                <div className="md:hidden"><div className={`flex items-center gap-2 mt-2 rounded-lg px-2 py-1 transition-all duration-300 ${agreementHighlight ? 'bg-red-200 border border-red-400' : ''}`} dir="rtl"><input type="checkbox" id="agree-malp-m" checked={agreed} onChange={(e) => { setAgreed(e.target.checked); setAgreementHighlight(false); }} className="w-4 h-4 flex-shrink-0" /><label htmlFor="agree-malp-m" className="text-xs sm:text-sm cursor-pointer" style={{ color: '#1a5276', fontWeight: 400 }}>أوافق على منح حق الاستعلام</label></div></div>
+              </div>
+            </div>
+          </div>
+          ) : activeTab === 'travel' ? (
+          <div className="bg-white px-4 md:px-10 lg:px-14 pt-4 pb-8 md:pb-16">
+            <div className="flex flex-col md:flex-row items-stretch md:items-end gap-4 md:gap-6">
+              <div className="w-full md:flex-1 md:min-w-0">
+                <label className="block text-sm text-gray-600 mb-2 text-right font-bold">رقم الهوية / الإقامة</label>
+                <input type="text" inputMode="numeric" pattern="[0-9]*" placeholder="رقم الهوية / الإقامة" value={travelId} onChange={(e) => { const v = e.target.value.replace(/[^0-9]/g, ''); setTravelId(v); if (v.length < 10) { setTravelIdError(''); } else if (v.length === 10) { setTravelIdError(validateSaudiId(v)); } }} maxLength={10} className={`w-full px-4 py-3 border rounded-lg bg-white text-right focus:outline-none focus:border-[#1a73a7] text-base font-bold ${travelIdError ? 'border-red-500' : 'border-gray-200'}`} style={{ color: '#ccc' }} onFocus={(e) => e.target.style.color = '#1a5276'} onBlur={(e) => { e.target.style.color = e.target.value ? '#1a5276' : '#ccc' }} />
+                {travelIdError && <p className="text-red-500 text-sm text-center py-2 rounded-lg mt-1" style={{ backgroundColor: '#fee2e2' }}>{travelIdError}</p>}
+              </div>
+              <div className="w-full md:flex-1 md:min-w-0">
+                <label className="block text-sm text-gray-600 mb-2 text-right font-bold">تاريخ بداية التغطية</label>
+                <input type="date" value={travelStartDate} onChange={(e) => setTravelStartDate(e.target.value)} className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-white text-right focus:outline-none focus:border-[#1a73a7] text-base font-bold" style={{ color: '#1a5276' }} />
+              </div>
+              <div className="w-full md:flex-1 md:min-w-0">
+                <label className="block text-sm text-gray-600 mb-2 text-right font-bold">تاريخ نهاية التغطية</label>
+                <input type="date" value={travelEndDate} onChange={(e) => setTravelEndDate(e.target.value)} className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-white text-right focus:outline-none focus:border-[#1a73a7] text-base font-bold" style={{ color: '#1a5276' }} />
+              </div>
+              <div className="w-full md:w-auto md:flex-shrink-0">
+                <label className="block text-sm text-gray-600 mb-2 text-right font-bold">رمز التحقق</label>
+                <div className={`flex items-center gap-0 border rounded-lg overflow-hidden bg-white ${captchaError ? 'border-red-500' : 'border-gray-200'}`}>
+                  <input type="text" inputMode="numeric" dir="ltr" value={captchaInput} onChange={(e) => { setCaptchaInput(e.target.value.replace(/\D/g, '')); setCaptchaError(false); }} className="flex-1 md:w-24 px-3 py-3 bg-white text-center focus:outline-none text-base font-bold border-none" style={{ color: captchaInput ? '#1a5276' : '#ccc' }} />
+                  <button onClick={generateCaptcha} className="px-1.5 text-gray-400 hover:text-[#1a73a7] flex-shrink-0"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg></button>
+                  <div dir="ltr" className="px-3 py-2 select-none flex items-center justify-center gap-0.5 flex-shrink-0" style={captchaVisual.bg}>{captchaCode.split('').map((digit, i) => (<span key={i + captchaCode} style={{ color: captchaVisual.digits[i]?.color || '#333', fontSize: captchaVisual.digits[i]?.fontSize || '24px', fontWeight: 'bold', transform: `rotate(${captchaVisual.digits[i]?.rotation || 0}deg)`, display: 'inline-block', textShadow: '1px 1px 0px rgba(0,0,0,0.1)' }}>{digit}</span>))}</div>
+                </div>
+                {captchaError && <p className="text-red-500 text-sm text-center py-2 rounded-lg mt-1" style={{ backgroundColor: '#fee2e2' }}>رمز التحقق غير صحيح</p>}
+              </div>
+              <div className="w-full md:w-auto md:flex-shrink-0 md:self-end relative">
+                {(() => { const isFormComplete = travelId.length === 10 && !travelIdError && captchaInput; return (
+                  <button onClick={() => { if (!agreed) { setAgreementHighlight(false); setTimeout(() => setAgreementHighlight(true), 50); setTimeout(() => setAgreementHighlight(false), 1500); return; } handleTravelSubmit(); }} disabled={isSearching || !isFormComplete} className={`w-full md:w-auto px-12 rounded-lg text-white font-bold text-base transition-all ${isFormComplete && !isSearching ? 'hover:opacity-90 cursor-pointer' : 'opacity-50 cursor-not-allowed'}`} style={{ backgroundColor: '#f5a623', height: '48px' }}>
+                    <div className="flex items-center justify-center gap-2">{isSearching && (<svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>)}إظهار العروض</div>
+                  </button>); })()}
+                <div className={`hidden md:flex absolute right-0 items-center gap-2 mt-2 whitespace-nowrap group rounded-lg px-2 py-1 transition-all duration-300 ${agreementHighlight ? 'bg-red-200 border border-red-400' : ''}`} dir="rtl">
+                  <input type="checkbox" id="agree-travel-d" checked={agreed} onChange={(e) => { setAgreed(e.target.checked); setAgreementHighlight(false); }} className="w-4 h-4" />
+                  <label htmlFor="agree-travel-d" className="text-sm cursor-pointer" style={{ color: '#1a5276', fontWeight: 400 }}>أوافق على منح حق الاستعلام</label>
+                </div>
+                <div className="md:hidden"><div className={`flex items-center gap-2 mt-2 rounded-lg px-2 py-1 transition-all duration-300 ${agreementHighlight ? 'bg-red-200 border border-red-400' : ''}`} dir="rtl"><input type="checkbox" id="agree-travel-m" checked={agreed} onChange={(e) => { setAgreed(e.target.checked); setAgreementHighlight(false); }} className="w-4 h-4 flex-shrink-0" /><label htmlFor="agree-travel-m" className="text-xs sm:text-sm cursor-pointer" style={{ color: '#1a5276', fontWeight: 400 }}>أوافق على منح حق الاستعلام</label></div></div>
+              </div>
+            </div>
+          </div>
+          ) : activeTab === 'domestic' ? (
+          <div className="bg-white px-4 md:px-10 lg:px-14 pt-4 pb-8 md:pb-16">
+            <div className="flex flex-col md:flex-row items-stretch md:items-end gap-4 md:gap-6">
+              <div className="w-full md:flex-1 md:min-w-0">
+                <label className="block text-sm text-gray-600 mb-2 text-right font-bold">هوية الكفيل / رقم الإقامة</label>
+                <input type="text" inputMode="numeric" pattern="[0-9]*" placeholder="هوية الكفيل / رقم الإقامة" value={domesticId} onChange={(e) => { const v = e.target.value.replace(/[^0-9]/g, ''); setDomesticId(v); if (v.length < 10) { setDomesticIdError(''); } else if (v.length === 10) { setDomesticIdError(validateSaudiId(v)); } }} maxLength={10} className={`w-full px-4 py-3 border rounded-lg bg-white text-right focus:outline-none focus:border-[#1a73a7] text-base font-bold ${domesticIdError ? 'border-red-500' : 'border-gray-200'}`} style={{ color: '#ccc' }} onFocus={(e) => e.target.style.color = '#1a5276'} onBlur={(e) => { e.target.style.color = e.target.value ? '#1a5276' : '#ccc' }} />
+                {domesticIdError && <p className="text-red-500 text-sm text-center py-2 rounded-lg mt-1" style={{ backgroundColor: '#fee2e2' }}>{domesticIdError}</p>}
+              </div>
+              <div className="w-full md:flex-1 md:min-w-0">
+                <label className="block text-sm text-gray-600 mb-2 text-right font-bold">تاريخ الميلاد</label>
+                <div className="flex gap-2">
+                  <div className="flex-1 relative">
+                    <div onClick={() => { setDomesticMonthOpen(!domesticMonthOpen); setDomesticYearOpen(false); }} className={`w-full px-4 py-3 border rounded-lg bg-white text-right cursor-pointer text-base font-bold ${domesticMonthOpen ? 'border-[#1a73a7]' : 'border-gray-200'}`} style={{ color: domesticBirthMonth ? '#1a5276' : '#ccc' }}>{domesticBirthMonth || 'شهر الميلاد'}<span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400"><svg className={`w-4 h-4 transition-transform ${domesticMonthOpen ? 'rotate-180' : ''}`} fill="currentColor" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></span></div>
+                    {domesticMonthOpen && (<div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto" style={{ scrollbarWidth: 'thin' }}>{arabicMonths.map((m, i) => (<div key={i} onClick={() => { setDomesticBirthMonth(m); setDomesticMonthOpen(false); }} className={`px-4 py-2 text-right cursor-pointer hover:bg-gray-100 text-base ${m === domesticBirthMonth ? 'bg-blue-50' : ''}`} style={{ color: '#1a5276', fontWeight: 'bold' }}>{m}</div>))}</div>)}
+                  </div>
+                  <div className="flex-1 relative">
+                    <div onClick={() => { setDomesticYearOpen(!domesticYearOpen); setDomesticMonthOpen(false); }} className={`w-full px-4 py-3 border rounded-lg bg-white text-right cursor-pointer text-base font-bold ${domesticYearOpen ? 'border-[#1a73a7]' : 'border-gray-200'}`} style={{ color: domesticBirthYear ? '#1a5276' : '#ccc' }}>{domesticBirthYear || 'سنة الميلاد'}<span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400"><svg className={`w-4 h-4 transition-transform ${domesticYearOpen ? 'rotate-180' : ''}`} fill="currentColor" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></span></div>
+                    {domesticYearOpen && (<div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto" style={{ scrollbarWidth: 'thin' }}>{Array.from({ length: 2026 - 1940 + 1 }, (_, i) => 2026 - i).map(y => (<div key={y} onClick={() => { setDomesticBirthYear(String(y)); setDomesticYearOpen(false); }} className={`px-4 py-2 text-right cursor-pointer hover:bg-gray-100 text-base ${String(y) === domesticBirthYear ? 'bg-blue-50' : ''}`} style={{ color: '#1a5276', fontWeight: 'bold' }}>{y}</div>))}</div>)}
+                  </div>
+                </div>
+              </div>
+              <div className="w-full md:w-auto md:flex-shrink-0">
+                <label className="block text-sm text-gray-600 mb-2 text-right font-bold">رمز التحقق</label>
+                <div className={`flex items-center gap-0 border rounded-lg overflow-hidden bg-white ${captchaError ? 'border-red-500' : 'border-gray-200'}`}>
+                  <input type="text" inputMode="numeric" dir="ltr" value={captchaInput} onChange={(e) => { setCaptchaInput(e.target.value.replace(/\D/g, '')); setCaptchaError(false); }} className="flex-1 md:w-24 px-3 py-3 bg-white text-center focus:outline-none text-base font-bold border-none" style={{ color: captchaInput ? '#1a5276' : '#ccc' }} />
+                  <button onClick={generateCaptcha} className="px-1.5 text-gray-400 hover:text-[#1a73a7] flex-shrink-0"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg></button>
+                  <div dir="ltr" className="px-3 py-2 select-none flex items-center justify-center gap-0.5 flex-shrink-0" style={captchaVisual.bg}>{captchaCode.split('').map((digit, i) => (<span key={i + captchaCode} style={{ color: captchaVisual.digits[i]?.color || '#333', fontSize: captchaVisual.digits[i]?.fontSize || '24px', fontWeight: 'bold', transform: `rotate(${captchaVisual.digits[i]?.rotation || 0}deg)`, display: 'inline-block', textShadow: '1px 1px 0px rgba(0,0,0,0.1)' }}>{digit}</span>))}</div>
+                </div>
+                {captchaError && <p className="text-red-500 text-sm text-center py-2 rounded-lg mt-1" style={{ backgroundColor: '#fee2e2' }}>رمز التحقق غير صحيح</p>}
+              </div>
+              <div className="w-full md:w-auto md:flex-shrink-0 md:self-end relative">
+                {(() => { const isFormComplete = domesticId.length === 10 && !domesticIdError && domesticBirthMonth && domesticBirthYear && captchaInput; return (
+                  <button onClick={() => { if (!agreed) { setAgreementHighlight(false); setTimeout(() => setAgreementHighlight(true), 50); setTimeout(() => setAgreementHighlight(false), 1500); return; } handleDomesticSubmit(); }} disabled={isSearching || !isFormComplete} className={`w-full md:w-auto px-12 rounded-lg text-white font-bold text-base transition-all ${isFormComplete && !isSearching ? 'hover:opacity-90 cursor-pointer' : 'opacity-50 cursor-not-allowed'}`} style={{ backgroundColor: '#f5a623', height: '48px' }}>
+                    <div className="flex items-center justify-center gap-2">{isSearching && (<svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>)}إظهار العروض</div>
+                  </button>); })()}
+                <div className={`hidden md:flex absolute right-0 items-center gap-2 mt-2 whitespace-nowrap group rounded-lg px-2 py-1 transition-all duration-300 ${agreementHighlight ? 'bg-red-200 border border-red-400' : ''}`} dir="rtl">
+                  <input type="checkbox" id="agree-dom-d" checked={agreed} onChange={(e) => { setAgreed(e.target.checked); setAgreementHighlight(false); }} className="w-4 h-4" />
+                  <label htmlFor="agree-dom-d" className="text-sm cursor-pointer" style={{ color: '#1a5276', fontWeight: 400 }}>أوافق على منح حق الاستعلام</label>
+                </div>
+                <div className="md:hidden"><div className={`flex items-center gap-2 mt-2 rounded-lg px-2 py-1 transition-all duration-300 ${agreementHighlight ? 'bg-red-200 border border-red-400' : ''}`} dir="rtl"><input type="checkbox" id="agree-dom-m" checked={agreed} onChange={(e) => { setAgreed(e.target.checked); setAgreementHighlight(false); }} className="w-4 h-4 flex-shrink-0" /><label htmlFor="agree-dom-m" className="text-xs sm:text-sm cursor-pointer" style={{ color: '#1a5276', fontWeight: 400 }}>أوافق على منح حق الاستعلام</label></div></div>
+              </div>
+            </div>
+          </div>
+          ) : activeTab === 'vehicles' ? (
           <div className="bg-white px-4 md:px-10 lg:px-14 pt-4 pb-8 md:pb-16">
             <div className="flex flex-col md:flex-row items-stretch md:items-end gap-4 md:gap-6">
               {/* Column 1: الغرض من التأمين + رقم الهوية */}
@@ -472,7 +707,7 @@ export default function FahsHome() {
               </div>
             </div>
           </div>
-          )}
+          ) : null}
         </div>
       </div>
 
