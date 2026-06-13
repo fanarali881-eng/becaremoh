@@ -124,11 +124,37 @@ async function sendTestNotification() {
   if (fcmTokens.size === 0) {
     return { ok: false, reason: "No FCM tokens stored", tokenCount: 0 };
   }
+  const title = "إشعار تجريبي";
+  const body = "هذا إشعار تجريبي للتأكد من عمل الإشعارات في الخلفية";
   const message = {
+    notification: {
+      title: title,
+      body: body
+    },
     data: {
-      title: "إشعار تجريبي",
-      body: "هذا إشعار تجريبي للتأكد من عمل الإشعارات",
+      title: title,
+      body: body,
       click_action: "FLUTTER_NOTIFICATION_CLICK"
+    },
+    webpush: {
+      headers: {
+        Urgency: "high",
+        TTL: "86400"
+      },
+      notification: {
+        title: title,
+        body: body,
+        icon: "/admin/favicon.ico",
+        badge: "/admin/favicon.ico",
+        requireInteraction: true,
+        vibrate: [200, 100, 200]
+      },
+      fcmOptions: {
+        link: "/admin/"
+      }
+    },
+    android: {
+      priority: "high"
     },
     tokens: Array.from(fcmTokens)
   };
