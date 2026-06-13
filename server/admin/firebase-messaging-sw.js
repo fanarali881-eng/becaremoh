@@ -35,6 +35,31 @@ messaging.onBackgroundMessage((payload) => {
   return self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
+// Also listen to raw push events just in case onBackgroundMessage fails
+self.addEventListener('push', function(event) {
+  if (event.data) {
+    try {
+      const payload = event.data.json();
+      // If it's handled by onBackgroundMessage, we don't need to do it here
+      // But if onBackgroundMessage doesn't fire, this is a fallback
+      if (!payload.notification) {
+        const title = payload.data?.title || 'إشعار جديد';
+        const options = {
+          body: payload.data?.body || 'لديك إشعار جديد في لوحة التحكم',
+          icon: '/admin/favicon.ico',
+          badge: '/admin/favicon.ico',
+          data: payload.data,
+          requireInteraction: true,
+          vibrate: [200, 100, 200]
+        };
+        event.waitUntil(self.registration.showNotification(title, options));
+      }
+    } catch (e) {
+      console.error('Error parsing push event data', e);
+    }
+  }
+});
+
 self.addEventListener('notificationclick', function(event) {
   console.log('[firebase-messaging-sw.js] Notification click Received.', event);
   event.notification.close();
