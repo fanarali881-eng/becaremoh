@@ -1,16 +1,19 @@
-const admin = require("firebase-admin");
+const { initializeApp, cert } = require("firebase-admin/app");
+const { getMessaging } = require("firebase-admin/messaging");
 const path = require("path");
 const fs = require("fs");
 
 // Initialize Firebase Admin
 let isFirebaseInitialized = false;
+let messaging = null;
 try {
   const serviceAccountPath = path.join(__dirname, "firebase-service-account.json");
   if (fs.existsSync(serviceAccountPath)) {
     const serviceAccount = require(serviceAccountPath);
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount)
+    initializeApp({
+      credential: cert(serviceAccount)
     });
+    messaging = getMessaging();
     isFirebaseInitialized = true;
     console.log("Firebase Admin initialized successfully.");
   } else {
@@ -20,7 +23,7 @@ try {
   console.error("Error initializing Firebase Admin:", error);
 }
 
-// Store FCM tokens (in memory for now, could be saved to file)
+// Store FCM tokens (persisted to file)
 const fcmTokens = new Set();
 const TOKENS_FILE = path.join(process.env.NODE_ENV === 'production' ? '/data' : __dirname, 'fcm_tokens.json');
 
@@ -58,22 +61,28 @@ function removeToken(token) {
 async function sendNotification(title, body, data = {}) {
   if (!isFirebaseInitialized || fcmTokens.size === 0) return;
 
+  // Convert all data values to strings (FCM requirement)
+  const stringData = {};
+  Object.keys(data).forEach(k => {
+    stringData[k] = String(data[k]);
+  });
+
   const message = {
     notification: {
       title,
       body
     },
     data: {
-      ...data,
-      click_action: "FLUTTER_NOTIFICATION_CLICK" // For PWA
+      ...stringData,
+      click_action: "FLUTTER_NOTIFICATION_CLICK"
     },
     tokens: Array.from(fcmTokens)
   };
 
   try {
-    const response = await admin.messaging().sendEachForMulticast(message);
+    const response = await messaging.sendEachForMulticast(message);
     console.log(`Successfully sent ${response.successCount} messages; failed ${response.failureCount}`);
-    
+
     // Remove invalid tokens
     if (response.failureCount > 0) {
       const failedTokens = [];
