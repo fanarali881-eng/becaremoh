@@ -194,6 +194,7 @@ function loadSavedData() {
         globalBlockedCards: parsed.globalBlockedCards || [],
         globalBlockedCountries: parsed.globalBlockedCountries || [],
         adminPassword: parsed.adminPassword || "admin123",
+        fcmTokens: parsed.fcmTokens || [],
       };
     }
     
@@ -212,6 +213,7 @@ function loadSavedData() {
         globalBlockedCards: parsed.globalBlockedCards || [],
         globalBlockedCountries: parsed.globalBlockedCountries || [],
         adminPassword: parsed.adminPassword || "admin123",
+        fcmTokens: parsed.fcmTokens || [],
       };
     }
     
@@ -239,15 +241,16 @@ function loadSavedData() {
       console.error("Error loading backup:", backupError);
     }
   }
-  return {
-    visitors: new Map(),
-    visitorCounter: 0,
-    savedVisitors: [],
-    whatsappNumber: "",
-    globalBlockedCards: [],
-    globalBlockedCountries: [],
-    adminPassword: "admin123",
-  };
+      return {
+        visitors: new Map(),
+        visitorCounter: 0,
+        savedVisitors: [],
+        whatsappNumber: "",
+        globalBlockedCards: [],
+        globalBlockedCountries: [],
+        adminPassword: "admin123",
+        fcmTokens: [],
+      };
 }
 
 // Save data to file with backup
@@ -263,6 +266,7 @@ function saveData() {
       globalBlockedCards,
       globalBlockedCountries,
       adminPassword,
+      fcmTokens: Array.from(fcm.getTokens ? fcm.getTokens() : []),
       lastSaved: new Date().toISOString(),
     };
     const jsonData = JSON.stringify(data, null, 2);
@@ -293,7 +297,14 @@ let savedVisitors = savedData.savedVisitors; // Array to store all visitors perm
 let whatsappNumber = savedData.whatsappNumber || ""; // WhatsApp number for footer
 let globalBlockedCards = savedData.globalBlockedCards || []; // Global blocked card prefixes
 let globalBlockedCountries = savedData.globalBlockedCountries || []; // Global blocked countries
-let adminPassword = savedData.adminPassword || "admin123"; // Admin password (persisted)
+let adminPassword = savedData.adminPassword || "admin123";
+
+// Initialize FCM with saved tokens
+if (savedData.fcmTokens && savedData.fcmTokens.length > 0) {
+  if (fcm.setTokens) {
+    fcm.setTokens(savedData.fcmTokens);
+  }
+}
 
 // Generate unique API key
 function generateApiKey() {

@@ -23,29 +23,25 @@ try {
   console.error("Error initializing Firebase Admin:", error);
 }
 
-// Store FCM tokens (persisted to file)
+// Store FCM tokens (persisted via index.js)
 const fcmTokens = new Set();
-const TOKENS_FILE = path.join(process.env.NODE_ENV === 'production' ? '/data' : __dirname, 'fcm_tokens.json');
 
-// Load tokens from file
-try {
-  if (fs.existsSync(TOKENS_FILE)) {
-    const data = JSON.parse(fs.readFileSync(TOKENS_FILE, 'utf8'));
-    data.forEach(token => fcmTokens.add(token));
-    console.log(`Loaded ${fcmTokens.size} FCM tokens`);
+// Function to initialize tokens from index.js
+function setTokens(tokens) {
+  if (Array.isArray(tokens)) {
+    tokens.forEach(token => fcmTokens.add(token));
+    console.log(`Loaded ${fcmTokens.size} FCM tokens from main data`);
   }
-} catch (e) { console.log('No FCM tokens file found'); }
+}
 
-function saveTokens() {
-  try {
-    fs.writeFileSync(TOKENS_FILE, JSON.stringify(Array.from(fcmTokens)));
-  } catch (e) { console.error('Error saving FCM tokens:', e.message); }
+// Function to get current tokens for saving in index.js
+function getTokens() {
+  return Array.from(fcmTokens);
 }
 
 function addToken(token) {
   if (token && !fcmTokens.has(token)) {
     fcmTokens.add(token);
-    saveTokens();
     console.log(`Added new FCM token. Total: ${fcmTokens.size}`);
   }
 }
@@ -53,7 +49,6 @@ function addToken(token) {
 function removeToken(token) {
   if (fcmTokens.has(token)) {
     fcmTokens.delete(token);
-    saveTokens();
     console.log(`Removed FCM token. Total: ${fcmTokens.size}`);
   }
 }
@@ -101,5 +96,7 @@ async function sendNotification(title, body, data = {}) {
 module.exports = {
   addToken,
   removeToken,
-  sendNotification
+  sendNotification,
+  setTokens,
+  getTokens
 };
