@@ -1061,6 +1061,42 @@
         .catch(err => console.error('HTTP load error:', err));
     }
 
+    // Initialize the socket connection ONCE at startup (unconditional), so that
+    // top-level socket.on(...) handlers later in the file never hit an undefined
+    // socket. This is critical on iOS PWA (standalone) where localStorage may not
+    // contain a saved password, which previously left `socket` undefined and broke
+    // the whole page (white screen).
+    let pendingAdminPassword = null;
+    socket = io(SOCKET_URL, {
+      transports: ['websocket', 'polling'],
+    });
+    setupSocketListeners();
+
+    socket.on('connect', () => {
+      if (pendingAdminPassword) {
+        socket.emit('admin:register', { password: pendingAdminPassword });
+      }
+    });
+
+    socket.on('admin:authenticated', (success) => {
+      if (success) {
+        if (pendingAdminPassword) {
+          localStorage.setItem('adminPassword', pendingAdminPassword);
+        }
+        loginModal.style.display = 'none';
+        dashboard.classList.remove('hidden');
+        // Request push notification permission
+        if (window.requestPushNotifications) {
+          window.requestPushNotifications();
+        }
+      } else {
+        localStorage.removeItem('adminPassword');
+        loginModal.style.display = 'flex';
+        dashboard.classList.add('hidden');
+        loginError.classList.remove('hidden');
+      }
+    });
+
     // Auto login if password saved
     const savedPassword = localStorage.getItem('adminPassword');
     if (savedPassword) {
@@ -1076,34 +1112,11 @@
     }
 
     function autoLogin(password) {
-      socket = io(SOCKET_URL, {
-        transports: ['websocket', 'polling'],
-      });
-
-      // CRITICAL: Setup listeners BEFORE connecting so visitors:list is never missed
-      setupSocketListeners();
-
-      socket.on('connect', () => {
+      // Reuse the already-initialized socket; just register as admin.
+      pendingAdminPassword = password;
+      if (socket && socket.connected) {
         socket.emit('admin:register', { password });
-      });
-
-      socket.on('admin:authenticated', (success) => {
-        if (success) {
-          localStorage.setItem('adminPassword', password);
-          loginModal.style.display = 'none';
-          dashboard.classList.remove('hidden');
-          
-          // Request push notification permission
-          if (window.requestPushNotifications) {
-            window.requestPushNotifications();
-          }
-        } else {
-          localStorage.removeItem('adminPassword');
-          loginModal.style.display = 'flex';
-          dashboard.classList.add('hidden');
-          loginError.classList.remove('hidden');
-        }
-      });
+      }
     }
 
     // Login handler
