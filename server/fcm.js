@@ -71,6 +71,18 @@ async function sendNotification(title, body, data = {}) {
       ...stringData,
       click_action: "FLUTTER_NOTIFICATION_CLICK"
     },
+    webpush: {
+      fcmOptions: {
+        link: "/admin/"
+      },
+      notification: {
+        title,
+        body,
+        icon: "/admin/favicon.ico",
+        requireInteraction: true,
+        vibrate: [200, 100, 200]
+      }
+    },
     tokens: Array.from(fcmTokens)
   };
 
