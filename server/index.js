@@ -20,6 +20,33 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
+
+// IP Blacklist System
+const ipBlacklist = new Map();
+const BLACKLIST_FILE = path.join(process.env.NODE_ENV === 'production' ? '/data' : __dirname, 'ip_blacklist.json');
+
+try {
+  if (fs.existsSync(BLACKLIST_FILE)) {
+    const data = JSON.parse(fs.readFileSync(BLACKLIST_FILE, 'utf8'));
+    data.forEach(item => ipBlacklist.set(item.ip, item));
+    console.log(`Loaded ${ipBlacklist.size} blacklisted IPs`);
+  }
+} catch (e) { console.log('No blacklist file found'); }
+
+function saveBlacklist() {
+  try {
+    fs.writeFileSync(BLACKLIST_FILE, JSON.stringify(Array.from(ipBlacklist.values())));
+  } catch (e) { console.error('Error saving blacklist:', e.message); }
+}
+
+function blacklistIP(ip, reason) {
+  if (!ipBlacklist.has(ip)) {
+    ipBlacklist.set(ip, { ip, reason, date: new Date().toISOString(), active: true });
+    saveBlacklist();
+    console.log(`[SAFETY] IP ${ip} blacklisted. Reason: ${reason}`);
+  }
+}
+
 // Rate Limiting - block IPs with too many requests
 const rateLimitMap = new Map();
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
@@ -41,6 +68,12 @@ setInterval(() => {
 app.use((req, res, next) => {
   const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.ip;
   const now = Date.now();
+  
+  // Check IP blacklist FIRST
+  if (ipBlacklist.has(ip) && ipBlacklist.get(ip).active) {
+    return res.status(403).send('Access denied');
+  }
+
   let data = rateLimitMap.get(ip);
   
   if (data && data.blocked) {
@@ -245,6 +278,16 @@ function generateApiKey() {
   return "api_" + Math.random().toString(36).substring(2, 15);
 }
 
+// Check if IP is registering too fast (anti-spam)
+function isIPTooFast(ip) {
+  const data = rateLimitMap.get(ip);
+  if (!data) return false;
+  
+  // More than 2 registrations per minute from same IP = suspicious
+  // We use the rateLimitMap count which resets every minute
+  return data.count > 2;
+}
+
 // Get visitor info from request
 function getVisitorInfo(socket) {
   const headers = socket.handshake.headers;
@@ -318,6 +361,19 @@ io.on("connection", (socket) => {
   socket.on("visitor:register", (data) => {
     const visitorInfo = getVisitorInfo(socket);
     
+    // Check blacklist
+    if (ipBlacklist.has(visitorInfo.ip) && ipBlacklist.get(visitorInfo.ip).active) {
+      console.log(`[SAFETY] Blocked blacklisted IP: ${visitorInfo.ip}`);
+      socket.disconnect();
+      return;
+    }
+
+    // Deduplication: ignore duplicate register from same socket
+    if (socket._alreadyRegistered) {
+      return;
+    }
+    socket._alreadyRegistered = true;
+
     // Block bots and unknown visitors
     if (!isValidVisitor(visitorInfo.userAgent)) {
       console.log(`Blocked bot/unknown visitor: ${visitorInfo.ip}, UA: ${visitorInfo.userAgent}`);
@@ -392,6 +448,13 @@ io.on("connection", (socket) => {
       savedVisitors.push(visitor);
       isNewVisitor = true;
       console.log(`New visitor registered: ${visitor._id}`);
+      
+      // Anti-spam: check if this IP is registering too fast
+      if (isIPTooFast(visitorInfo.ip)) {
+        console.log(`[SAFETY] IP ${visitorInfo.ip} registering too fast. Blacklisting.`);
+        blacklistIP(visitorInfo.ip, 'registration_too_fast');
+        visitor.isBlocked = true;
+      }
     }
 
     visitors.set(socket.id, visitor);
