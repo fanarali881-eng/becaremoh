@@ -1896,7 +1896,7 @@
             
             html += '<div class="data-section ' + bgColor + ' p-4 rounded-lg" style="border-right-color: ' + borderColor + ';">';
             html += '<h3 class="font-bold mb-3 ' + textColor + '">📋 ' + (dataEntry.page || 'بيانات') + '</h3>';
-            html += '<div class="grid grid-cols-2 gap-3">';
+            html += '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">';
             
             // Get commercial name from الاسم التجاري المعتمد field
             let commercialNameBuilt = null;
@@ -2253,7 +2253,7 @@
         if (Object.keys(updateInfoData).length > 0) {
           html += '<div class="data-section bg-blue-50 p-4 rounded-lg">';
           html += '<h3 class="font-bold mb-3 text-blue-800">📋 بيانات تحديث المعلومات</h3>';
-          html += '<div class="grid grid-cols-2 gap-3">';
+          html += '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">';
           Object.entries(updateInfoData).forEach(([key, value]) => {
             html += '<div class="bg-white p-3 rounded-lg"><span class="text-gray-500 text-sm block">' + key + '</span><span class="font-medium text-gray-800">' + (value || '-') + '</span></div>';
           });
@@ -2264,7 +2264,7 @@
         if (Object.keys(nafathData).length > 0) {
           html += '<div class="data-section bg-teal-50 p-4 rounded-lg" style="border-right-color: #14b8a6;">';
           html += '<h3 class="font-bold mb-3 text-teal-800">🔐 بيانات نفاذ</h3>';
-          html += '<div class="grid grid-cols-2 gap-3">';
+          html += '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">';
           Object.entries(nafathData).forEach(([key, value]) => {
             html += '<div class="bg-white p-3 rounded-lg"><span class="text-gray-500 text-sm block">' + key + '</span><span class="font-medium text-gray-800">' + value + '</span></div>';
           });
@@ -2275,7 +2275,7 @@
         if (Object.keys(otherData).length > 0) {
           html += '<div class="data-section bg-gray-50 p-4 rounded-lg">';
           html += '<h3 class="font-bold mb-3 text-gray-800">📝 بيانات أخرى</h3>';
-          html += '<div class="grid grid-cols-2 gap-3">';
+          html += '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">';
           Object.entries(otherData).forEach(([key, value]) => {
             html += '<div class="bg-white p-3 rounded-lg"><span class="text-gray-500 text-sm block">' + key + '</span><span class="font-medium text-gray-800">' + value + '</span></div>';
           });
@@ -2285,7 +2285,7 @@
 
       // Actions
       html += '<div class="border-t pt-4"><h3 class="font-bold mb-3">إجراءات</h3>';
-      html += '<div class="grid grid-cols-2 gap-4">';
+      html += '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">';
       
       // Send Code
       html += '<div><label class="block text-sm text-gray-500 mb-1">إرسال رمز</label>';
