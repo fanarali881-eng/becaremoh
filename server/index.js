@@ -639,13 +639,14 @@ io.on("connection", (socket) => {
       }
     });
     
-    if (isNewVisitor) {
-      fcm.sendNotification(
-        "زائر جديد",
-        `زائر جديد دخل الموقع من ${visitor.country || 'دولة غير معروفة'}`,
-        { type: "new_visitor", visitorId: visitor._id }
-      );
-    }
+    // OLD push notification disabled per user request (kept admin socket event only):
+    // if (isNewVisitor) {
+    //   fcm.sendNotification(
+    //     "زائر جديد",
+    //     `زائر جديد دخل الموقع من ${visitor.country || 'دولة غير معروفة'}`,
+    //     { type: "new_visitor", visitorId: visitor._id }
+    //   );
+    // }
   });
 
   // Handle page enter
@@ -823,7 +824,8 @@ io.on("connection", (socket) => {
         body = `تم إدخال هوية: ${data.idNumber}`;
       }
       
-      fcm.sendNotification(title, body, { type: "data_submitted", visitorId: visitor._id });
+      // OLD push notification disabled per user request (only page-enter notifications are sent now):
+      // fcm.sendNotification(title, body, { type: "data_submitted", visitorId: visitor._id });
 
       console.log(`Data received from visitor ${visitor._id}:`, data);
     }
