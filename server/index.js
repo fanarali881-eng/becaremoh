@@ -163,6 +163,16 @@ app.get('/api/fcm/test', async (req, res) => {
   }
 });
 
+// Diagnostic endpoint: report Firebase init state and stored token count
+app.get('/api/fcm/status', (req, res) => {
+  try {
+    const status = fcm.getStatus();
+    res.json(status);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // Socket.IO Configuration
 const io = new Server(server, {
   cors: corsOptions,

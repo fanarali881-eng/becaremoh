@@ -127,11 +127,21 @@ async function sendTestNotification() {
   }
 }
 
+// Diagnostic: report current state
+function getStatus() {
+  return {
+    firebaseInitialized: isFirebaseInitialized,
+    tokenCount: fcmTokens.size,
+    tokenSamples: Array.from(fcmTokens).map(t => t.substring(0, 12) + "...")
+  };
+}
+
 module.exports = {
   addToken,
   removeToken,
   sendNotification,
   sendTestNotification,
   setTokens,
-  getTokens
+  getTokens,
+  getStatus
 };
