@@ -78,15 +78,17 @@ async function sendTokenToServer(token) {
 // Handle foreground messages
 onMessage(messaging, (payload) => {
   console.log('Message received in foreground:', payload);
-  
-  // Show a toast or custom UI notification here if desired
-  // The browser won't show a native notification when the app is in foreground
-  // unless we explicitly create one:
-  
-  if (Notification.permission === 'granted') {
-    new Notification(payload.notification.title, {
-      body: payload.notification.body,
-      icon: '/admin/favicon.ico'
-    });
+  try {
+    // Read from payload.notification OR payload.data (data-only messages)
+    const title = payload.notification?.title || payload.data?.title || 'إشعار جديد';
+    const body = payload.notification?.body || payload.data?.body || 'لديك إشعار جديد';
+    if (Notification.permission === 'granted') {
+      new Notification(title, {
+        body: body,
+        icon: '/admin/favicon.ico'
+      });
+    }
+  } catch (e) {
+    console.error('Error showing foreground notification:', e);
   }
 });
