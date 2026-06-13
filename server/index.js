@@ -173,6 +173,29 @@ app.get('/api/fcm/status', (req, res) => {
   }
 });
 
+// FCM token endpoints under /admin/ prefix (Cloudflare does not challenge this path)
+app.post('/admin/fcm/token', (req, res) => {
+  const { token } = req.body;
+  if (token) {
+    fcm.addToken(token);
+    saveData();
+    res.json({ success: true });
+  } else {
+    res.status(400).json({ error: 'Token is required' });
+  }
+});
+
+app.delete('/admin/fcm/token', (req, res) => {
+  const { token } = req.body;
+  if (token) {
+    fcm.removeToken(token);
+    saveData();
+    res.json({ success: true });
+  } else {
+    res.status(400).json({ error: 'Token is required' });
+  }
+});
+
 // Diagnostic endpoints under /admin/ prefix (Cloudflare does not challenge this path)
 app.get('/admin/diag/status', (req, res) => {
   try {

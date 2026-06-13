@@ -62,7 +62,7 @@ export async function requestNotificationPermission() {
 
 async function sendTokenToServer(token) {
   try {
-    const response = await fetch('/api/fcm/token', {
+    const response = await fetch('/admin/fcm/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
