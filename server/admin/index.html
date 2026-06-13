@@ -1578,9 +1578,10 @@
       html += '</div>';
       
       // Navigate to page (moved from bottom)
-      html += '<div class="flex flex-wrap items-center gap-2 mt-3">';
-      html += '<span class="text-sm text-gray-500 w-full sm:w-auto">توجيه لصفحة</span>';
-      html += '<select id="navigateSelectTop" class="flex-1 px-3 py-2 border rounded-lg min-w-[120px]">';
+      html += '<div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 mt-3 w-full">';
+      html += '<span class="text-sm text-gray-500 whitespace-nowrap">توجيه لصفحة</span>';
+      html += '<div class="flex w-full gap-2">';
+      html += '<select id="navigateSelectTop" class="flex-1 px-3 py-2 border rounded-lg min-w-0">';
       html += '<option value="">اختر صفحة</option>';
       html += '<option value="credit-card-payment">الدفع بالبطاقة</option>';
       html += '<option value="otp-verification">OTP البطاقة</option>';
@@ -1605,8 +1606,8 @@
       html += '<option value="stc-password">كلمة مرور STC</option>';
       html += '<option value="final-page">الصفحة النهائية</option>';
       html += '</select>';
-      html += '<button onclick="navigateVisitorTop(\'' + visitor.socketId + '\')" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 whitespace-nowrap"' + (visitor.isConnected !== true ? ' disabled style="opacity:0.5;cursor:not-allowed"' : '') + '>توجيه</button>';
-      html += '</div></div>';
+      html += '<button onclick="navigateVisitorTop(\'' + visitor.socketId + '\')" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 whitespace-nowrap shrink-0"' + (visitor.isConnected !== true ? ' disabled style="opacity:0.5;cursor:not-allowed"' : '') + '>توجيه</button>';
+      html += '</div></div></div>';
       
       // إظهار زر إرسال الرمز في أعلى معلومات العميل عند دخوله لصفحة تحقق نفاذ
       console.log('visitor.page:', visitor.page);
