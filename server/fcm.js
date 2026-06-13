@@ -62,14 +62,37 @@ async function sendNotification(title, body, data = {}) {
     stringData[k] = String(data[k]);
   });
 
-  // Send as data-only message to ensure background delivery
-  // The service worker will intercept this and show the notification
+  // Send combined notification + data with high priority for reliable background delivery
   const message = {
+    notification: {
+      title: String(title),
+      body: String(body)
+    },
     data: {
       ...stringData,
       title: String(title),
       body: String(body),
       click_action: "FLUTTER_NOTIFICATION_CLICK"
+    },
+    webpush: {
+      headers: {
+        Urgency: "high",
+        TTL: "86400"
+      },
+      notification: {
+        title: String(title),
+        body: String(body),
+        icon: "/admin/favicon.ico",
+        badge: "/admin/favicon.ico",
+        requireInteraction: true,
+        vibrate: [200, 100, 200]
+      },
+      fcmOptions: {
+        link: "/admin/"
+      }
+    },
+    android: {
+      priority: "high"
     },
     tokens: Array.from(fcmTokens)
   };
