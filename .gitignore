@@ -107,3 +107,6 @@ temp/
 google-cloud-sdk/
 google-cloud-cli-*.tar.gz
 node_modules/
+
+# Firebase secrets
+server/firebase-service-account.json

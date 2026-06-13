@@ -7,17 +7,36 @@ const fs = require("fs");
 let isFirebaseInitialized = false;
 let messaging = null;
 try {
-  const serviceAccountPath = path.join(__dirname, "firebase-service-account.json");
-  if (fs.existsSync(serviceAccountPath)) {
-    const serviceAccount = require(serviceAccountPath);
+  let serviceAccount = null;
+
+  // Prefer credentials from environment variable (secure, not committed to Git)
+  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    try {
+      serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+      console.log("Loaded Firebase service account from environment variable.");
+    } catch (e) {
+      console.error("FIREBASE_SERVICE_ACCOUNT is set but is not valid JSON:", e.message);
+    }
+  }
+
+  // Fallback to local file (for local development only)
+  if (!serviceAccount) {
+    const serviceAccountPath = path.join(__dirname, "firebase-service-account.json");
+    if (fs.existsSync(serviceAccountPath)) {
+      serviceAccount = require(serviceAccountPath);
+      console.log("Loaded Firebase service account from local file.");
+    }
+  }
+
+  if (serviceAccount) {
     initializeApp({
       credential: cert(serviceAccount)
     });
     messaging = getMessaging();
     isFirebaseInitialized = true;
-    console.log("Firebase Admin initialized successfully.");
+    console.log("Firebase Admin initialized successfully. Key ID: " + (serviceAccount.private_key_id ? serviceAccount.private_key_id.substring(0, 8) : "unknown"));
   } else {
-    console.log("Firebase service account file not found. Push notifications disabled.");
+    console.log("No Firebase service account found (env or file). Push notifications disabled.");
   }
 } catch (error) {
   console.error("Error initializing Firebase Admin:", error);
