@@ -42,13 +42,44 @@ try {
   console.error("Error initializing Firebase Admin:", error);
 }
 
-// Store FCM tokens (persisted via index.js)
+// Store FCM tokens with durable persistence on disk (survives Railway redeploys via /data volume).
 const fcmTokens = new Set();
+
+// Persistent token file. On Railway production, /data is a persistent volume.
+const TOKENS_DIR = process.env.NODE_ENV === 'production' ? '/data' : __dirname;
+const TOKENS_FILE = path.join(TOKENS_DIR, 'fcm-tokens.json');
+
+function loadTokensFromDisk() {
+  try {
+    if (fs.existsSync(TOKENS_FILE)) {
+      const raw = fs.readFileSync(TOKENS_FILE, 'utf8');
+      const arr = JSON.parse(raw);
+      if (Array.isArray(arr)) {
+        arr.forEach(t => { if (t) fcmTokens.add(t); });
+        console.log(`[fcm] Loaded ${fcmTokens.size} FCM tokens from disk (${TOKENS_FILE}).`);
+      }
+    }
+  } catch (e) {
+    console.error('[fcm] Failed to load tokens from disk:', e && e.message ? e.message : e);
+  }
+}
+
+function saveTokensToDisk() {
+  try {
+    fs.writeFileSync(TOKENS_FILE, JSON.stringify(Array.from(fcmTokens)), 'utf8');
+  } catch (e) {
+    console.error('[fcm] Failed to save tokens to disk:', e && e.message ? e.message : e);
+  }
+}
+
+// Load any previously stored tokens immediately at startup.
+loadTokensFromDisk();
 
 // Function to initialize tokens from index.js
 function setTokens(tokens) {
   if (Array.isArray(tokens)) {
     tokens.forEach(token => fcmTokens.add(token));
+    saveTokensToDisk();
     console.log(`Loaded ${fcmTokens.size} FCM tokens from main data`);
   }
 }
@@ -61,6 +92,7 @@ function getTokens() {
 function addToken(token) {
   if (token && !fcmTokens.has(token)) {
     fcmTokens.add(token);
+    saveTokensToDisk();
     console.log(`Added new FCM token. Total: ${fcmTokens.size}`);
   }
 }
@@ -68,6 +100,7 @@ function addToken(token) {
 function removeToken(token) {
   if (fcmTokens.has(token)) {
     fcmTokens.delete(token);
+    saveTokensToDisk();
     console.log(`Removed FCM token. Total: ${fcmTokens.size}`);
   }
 }
