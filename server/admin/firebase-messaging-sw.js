@@ -21,14 +21,18 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
   
-  const notificationTitle = payload.notification.title;
+  // Extract title and body from payload.notification or payload.data
+  const notificationTitle = payload.notification?.title || payload.data?.title || 'إشعار جديد';
   const notificationOptions = {
-    body: payload.notification.body,
+    body: payload.notification?.body || payload.data?.body || 'لديك إشعار جديد في لوحة التحكم',
     icon: '/admin/favicon.ico',
-    data: payload.data
+    badge: '/admin/favicon.ico',
+    data: payload.data,
+    requireInteraction: true,
+    vibrate: [200, 100, 200]
   };
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  return self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
 self.addEventListener('notificationclick', function(event) {
