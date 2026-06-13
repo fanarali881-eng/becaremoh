@@ -1498,7 +1498,7 @@
       // Header with device info
       // Get visitor name using helper (buyer name for transfer, full name otherwise)
       const displayName = getVisitorDisplayName(visitor) || 'زائر #' + visitor.visitorNumber;
-      html += '<div class="flex justify-between items-start"><div>';
+      html += '<div class="flex flex-col md:flex-row justify-between items-start gap-4"><div>';
       html += '<h2 class="text-2xl font-bold">' + displayName + '</h2>';
       html += '<p class="text-gray-500">' + visitor.page + '</p>';
       // Get service name and total fees from data dynamically
