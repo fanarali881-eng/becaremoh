@@ -278,6 +278,23 @@ app.get('/admin/diag/test', async (req, res) => {
   }
 });
 
+// Client-side diagnostic log collector (to debug white-screen on iOS PWA)
+const clientLogs = [];
+app.post('/admin/diag/clientlog', express.text({ type: '*/*', limit: '64kb' }), (req, res) => {
+  try {
+    const entry = { t: new Date().toISOString(), ip: req.headers['x-forwarded-for'] || req.ip, msg: String(req.body || '').slice(0, 2000) };
+    clientLogs.push(entry);
+    if (clientLogs.length > 200) clientLogs.shift();
+    console.log('[clientlog]', entry.msg);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+app.get('/admin/diag/clientlog', (req, res) => {
+  res.json({ count: clientLogs.length, logs: clientLogs.slice(-50) });
+});
+
 // Socket.IO Configuration
 const io = new Server(server, {
   cors: corsOptions,

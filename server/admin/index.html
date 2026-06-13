@@ -26,8 +26,13 @@
         showErr('PROMISE REJECTION: ' + ((e.reason && (e.reason.message||e.reason)) || 'unknown'));
       });
       window.__diagShow = showErr;
-      // marker that head script ran
-      document.addEventListener('DOMContentLoaded', function(){ showErr('DIAG: DOMContentLoaded ok; standalone=' + (window.navigator.standalone===true)); });
+      // marker that head script ran (also send to server so we can read it remotely)
+      function logToServer(m){ try { fetch('/admin/diag/clientlog', {method:'POST', headers:{'Content-Type':'text/plain'}, body:String(m)}); } catch(e){} }
+      window.__diagLog = logToServer;
+      logToServer('HEAD script ran; standalone=' + (window.navigator.standalone===true) + '; ua=' + navigator.userAgent);
+      document.addEventListener('DOMContentLoaded', function(){ var m='DIAG: DOMContentLoaded ok; standalone=' + (window.navigator.standalone===true); showErr(m); logToServer(m); });
+      window.addEventListener('error', function(e){ logToServer('ERROR: ' + (e.message||'') + ' @ ' + (e.filename||'') + ':' + (e.lineno||'')); }, true);
+      window.addEventListener('unhandledrejection', function(e){ logToServer('REJECTION: ' + ((e.reason && (e.reason.message||e.reason)) || 'unknown')); });
     })();
   </script>
   <link rel="manifest" href="/admin/manifest.json">
