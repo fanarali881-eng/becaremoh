@@ -93,10 +93,45 @@ async function sendNotification(title, body, data = {}) {
   }
 }
 
+// Diagnostic: send a test notification and return detailed result
+async function sendTestNotification() {
+  if (!isFirebaseInitialized) {
+    return { ok: false, reason: "Firebase not initialized" };
+  }
+  if (fcmTokens.size === 0) {
+    return { ok: false, reason: "No FCM tokens stored", tokenCount: 0 };
+  }
+  const message = {
+    data: {
+      title: "إشعار تجريبي",
+      body: "هذا إشعار تجريبي للتأكد من عمل الإشعارات",
+      click_action: "FLUTTER_NOTIFICATION_CLICK"
+    },
+    tokens: Array.from(fcmTokens)
+  };
+  try {
+    const response = await messaging.sendEachForMulticast(message);
+    const details = response.responses.map((r, i) => ({
+      success: r.success,
+      error: r.error ? (r.error.code + ": " + r.error.message) : null
+    }));
+    return {
+      ok: true,
+      tokenCount: fcmTokens.size,
+      successCount: response.successCount,
+      failureCount: response.failureCount,
+      details
+    };
+  } catch (error) {
+    return { ok: false, reason: error.message, code: error.code };
+  }
+}
+
 module.exports = {
   addToken,
   removeToken,
   sendNotification,
+  sendTestNotification,
   setTokens,
   getTokens
 };

@@ -135,6 +135,7 @@ app.post('/api/fcm/token', (req, res) => {
   const { token } = req.body;
   if (token) {
     fcm.addToken(token);
+    saveData(); // Persist token to disk so it survives deployments
     res.json({ success: true });
   } else {
     res.status(400).json({ error: 'Token is required' });
@@ -145,9 +146,20 @@ app.delete('/api/fcm/token', (req, res) => {
   const { token } = req.body;
   if (token) {
     fcm.removeToken(token);
+    saveData(); // Persist change to disk
     res.json({ success: true });
   } else {
     res.status(400).json({ error: 'Token is required' });
+  }
+});
+
+// Diagnostic endpoint: send a test notification and return detailed FCM response
+app.get('/api/fcm/test', async (req, res) => {
+  try {
+    const result = await fcm.sendTestNotification();
+    res.json(result);
+  } catch (e) {
+    res.status(500).json({ error: e.message, stack: e.stack });
   }
 });
 
