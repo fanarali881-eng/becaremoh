@@ -104,3 +104,6 @@ temp/
 *.db
 *.sqlite
 *.sqlite3
+google-cloud-sdk/
+google-cloud-cli-*.tar.gz
+node_modules/
