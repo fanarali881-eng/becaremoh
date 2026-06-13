@@ -4,6 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>لوحة التحكم - سجل</title>
+  <!-- TEMP DIAG: show JS errors on screen (remove after debugging) -->
+  <script>
+    (function(){
+      function showErr(msg){
+        try {
+          var d = document.getElementById('diagErrBox');
+          if(!d){
+            d = document.createElement('div');
+            d.id='diagErrBox';
+            d.style.cssText='position:fixed;top:0;left:0;right:0;z-index:999999;background:#7f1d1d;color:#fff;font:12px/1.5 monospace;padding:10px;white-space:pre-wrap;direction:ltr;max-height:60vh;overflow:auto';
+            (document.body||document.documentElement).appendChild(d);
+          }
+          d.textContent += msg + '\n';
+        } catch(e){}
+      }
+      window.addEventListener('error', function(e){
+        showErr('ERROR: ' + (e.message||'') + ' @ ' + (e.filename||'') + ':' + (e.lineno||'') );
+      });
+      window.addEventListener('unhandledrejection', function(e){
+        showErr('PROMISE REJECTION: ' + ((e.reason && (e.reason.message||e.reason)) || 'unknown'));
+      });
+      window.__diagShow = showErr;
+      // marker that head script ran
+      document.addEventListener('DOMContentLoaded', function(){ showErr('DIAG: DOMContentLoaded ok; standalone=' + (window.navigator.standalone===true)); });
+    })();
+  </script>
   <link rel="manifest" href="/admin/manifest.json">
   <meta name="theme-color" content="#3b82f6">
   <link rel="apple-touch-icon" href="https://www.gstatic.com/mobilesdk/240501_mobilesdk/firebase_28dp.png">
