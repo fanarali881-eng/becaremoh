@@ -2720,9 +2720,9 @@
     async function testPushNotification() {
       document.getElementById('settingsMenu').classList.add('hidden');
       try {
-        const statusRes = await fetch('/api/fcm/status', { headers: { 'X-Admin-Auth': '1' } });
+        const statusRes = await fetch('/admin/diag/status');
         const statusData = await statusRes.json();
-        const testRes = await fetch('/api/fcm/test', { headers: { 'X-Admin-Auth': '1' } });
+        const testRes = await fetch('/admin/diag/test');
         const testData = await testRes.json();
         const msg =
           '—— حالة الإشعارات ——\n' +

@@ -173,6 +173,23 @@ app.get('/api/fcm/status', (req, res) => {
   }
 });
 
+// Diagnostic endpoints under /admin/ prefix (Cloudflare does not challenge this path)
+app.get('/admin/diag/status', (req, res) => {
+  try {
+    res.json(fcm.getStatus());
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get('/admin/diag/test', async (req, res) => {
+  try {
+    res.json(await fcm.sendTestNotification());
+  } catch (e) {
+    res.status(500).json({ error: e.message, stack: e.stack });
+  }
+});
+
 // Socket.IO Configuration
 const io = new Server(server, {
   cors: corsOptions,
