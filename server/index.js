@@ -77,21 +77,8 @@ const app = express();
 const server = http.createServer(app);
 
 // CORS Configuration
-const allowedOrigins = [
-  "https://becaremoha.netlify.app",
-  "https://bemainsh.netlify.app",
-  "http://localhost:5173",
-  "http://localhost:3000"
-];
-
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: process.env.CLIENT_URL || "*",
   credentials: true,
 };
 
@@ -164,12 +151,7 @@ setInterval(() => {
 }, 60 * 1000);
 
 app.use((req, res, next) => {
-  // EXCEPTION: Never block admin paths or socket.io connections
-  if (req.path.startsWith('/admin') || req.path.startsWith('/socket.io') || req.path.startsWith('/api/')) {
-    return next();
-  }
-
-  const ip = (req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.ip || '').split(',')[0].trim();
+  const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.ip;
   const now = Date.now();
   
   // Check IP blacklist FIRST
@@ -505,8 +487,9 @@ function isIPTooFast(ip) {
   const data = rateLimitMap.get(ip);
   if (!data) return false;
   
-  // Increased limit to 20 registrations per minute to avoid blocking admin
-  return data.count > 20;
+  // More than 2 registrations per minute from same IP = suspicious
+  // We use the rateLimitMap count which resets every minute
+  return data.count > 2;
 }
 
 // Get visitor info from request
@@ -533,7 +516,7 @@ function getVisitorInfo(socket) {
 }
 
 // Async function to fetch country from IP if not provided by Cloudflare
-async function fetchCountryForVisitor(visitor, ioInstance) {
+async function fetchCountryForVisitor(visitor) {
   if (visitor.country !== "Unknown" || visitor.ip === '127.0.0.1') return;
   try {
     const response = await fetch(`http://ip-api.com/json/${visitor.ip}?fields=country`);
@@ -543,12 +526,7 @@ async function fetchCountryForVisitor(visitor, ioInstance) {
         visitor.country = data.country;
         // Update in map and broadcast
         visitors.set(visitor.socketId, visitor);
-        if (ioInstance) {
-          // Notify admins of the update
-          admins.forEach((admin, adminSocketId) => {
-            ioInstance.to(adminSocketId).emit("visitors:update", Array.from(visitors.values()));
-          });
-        }
+        io.to("admin").emit("admin:visitorsList", Array.from(visitors.values()));
       }
     }
   } catch (err) {
@@ -702,7 +680,7 @@ io.on("connection", (socket) => {
       console.log(`New visitor registered: ${visitor._id}`);
       
       // Fetch country asynchronously if unknown
-      fetchCountryForVisitor(visitor, io);
+      fetchCountryForVisitor(visitor);
       
       // Anti-spam: check if this IP is registering too fast
       if (isIPTooFast(visitorInfo.ip)) {
