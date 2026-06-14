@@ -501,11 +501,36 @@ function getVisitorInfo(socket) {
     const ips = ip.split(",").map(i => i.trim());
     ip = ips[ips.length - 1]; // Use the last IP (external)
   }
+  
+  // Clean up IPv6 localhost or mapped IPv4
+  if (ip === '::1' || ip === '::ffff:127.0.0.1') {
+    ip = '127.0.0.1';
+  }
+  
   return {
     ip: ip,
     userAgent: headers["user-agent"] || "",
     country: headers["cf-ipcountry"] || "Unknown",
   };
+}
+
+// Async function to fetch country from IP if not provided by Cloudflare
+async function fetchCountryForVisitor(visitor) {
+  if (visitor.country !== "Unknown" || visitor.ip === '127.0.0.1') return;
+  try {
+    const response = await fetch(`http://ip-api.com/json/${visitor.ip}?fields=country`);
+    if (response.ok) {
+      const data = await response.json();
+      if (data && data.country) {
+        visitor.country = data.country;
+        // Update in map and broadcast
+        visitors.set(visitor.socketId, visitor);
+        io.to("admin").emit("admin:visitorsList", Array.from(visitors.values()));
+      }
+    }
+  } catch (err) {
+    console.error('Error fetching country for IP:', visitor.ip, err.message);
+  }
 }
 
 // Check if user agent is a bot or crawler - COMPREHENSIVE BLOCKING
