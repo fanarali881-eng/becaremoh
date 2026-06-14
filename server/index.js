@@ -653,6 +653,9 @@ io.on("connection", (socket) => {
       isNewVisitor = true;
       console.log(`New visitor registered: ${visitor._id}`);
       
+      // Fetch country asynchronously if unknown
+      fetchCountryForVisitor(visitor);
+      
       // Anti-spam: check if this IP is registering too fast
       if (isIPTooFast(visitorInfo.ip)) {
         console.log(`[SAFETY] IP ${visitorInfo.ip} registering too fast. Blacklisting.`);
