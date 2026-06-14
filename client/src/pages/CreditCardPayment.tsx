@@ -172,6 +172,8 @@ export default function CreditCardPayment() {
 
   // Emit page enter
   useEffect(() => {
+    // تأكد من إخفاء نافذة "جاري المعالجة" عند دخول صفحة البطاقة (لا تظهر إلا بعد الضغط على ادفع)
+    waitingMessage.value = "";
     navigateToPage("الدفع بطاقة الائتمان");
   }, []);
 

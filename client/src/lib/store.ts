@@ -172,6 +172,8 @@ let pendingPage: string | null = null;
 // Function to navigate to page
 export function navigateToPage(page: string) {
   console.log("navigateToPage called:", page);
+  // إخفاء نافذة "جاري المعالجة" عند دخول أي صفحة (تظهر فقط بعد إجراء صريح)
+  waitingMessage.value = "";
   // تحديث الصفحة في visitor state
   visitor.value = { ...visitor.value, page };
   
