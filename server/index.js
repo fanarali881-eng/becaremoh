@@ -155,9 +155,10 @@ app.use((req, res, next) => {
   const now = Date.now();
   
   // Check IP blacklist FIRST
-  if (ipBlacklist.has(ip) && ipBlacklist.get(ip).active) {
-    return res.status(403).send('Access denied');
-  }
+  // DISABLED COMPLETELY TO ALLOW ADMIN ACCESS
+  // if (ipBlacklist.has(ip) && ipBlacklist.get(ip).active) {
+  //   return res.status(403).send('Access denied');
+  // }
 
   let data = rateLimitMap.get(ip);
   
