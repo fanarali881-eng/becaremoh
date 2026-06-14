@@ -156,7 +156,7 @@ app.use((req, res, next) => {
     return next();
   }
 
-  const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.ip;
+  const ip = (req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.ip || '').split(',')[0].trim();
   const now = Date.now();
   
   // Check IP blacklist FIRST
