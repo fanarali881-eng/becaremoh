@@ -304,6 +304,35 @@ app.get('/admin/diag/clientlog', (req, res) => {
   res.json({ count: clientLogs.length, logs: clientLogs.slice(-50) });
 });
 
+// TEMP diagnostic: inspect persistence environment (storage volume / NODE_ENV)
+app.get('/admin/diag/storage', (req, res) => {
+  const out = {
+    NODE_ENV: process.env.NODE_ENV || null,
+    DATA_DIR: DATA_DIR,
+    DATA_FILE: DATA_FILE,
+    railwayVolumeMountPath: process.env.RAILWAY_VOLUME_MOUNT_PATH || null,
+    checks: {},
+  };
+  function probe(dir) {
+    const info = { exists: false, writable: false, error: null };
+    try {
+      info.exists = fs.existsSync(dir);
+      const testFile = path.join(dir, '.write-test-' + Date.now());
+      fs.writeFileSync(testFile, 'ok');
+      fs.unlinkSync(testFile);
+      info.writable = true;
+    } catch (e) {
+      info.error = e.message;
+    }
+    return info;
+  }
+  out.checks['/data'] = probe('/data');
+  out.checks['__dirname'] = probe(__dirname);
+  try { out.dataFileExists = fs.existsSync(DATA_FILE); } catch (e) { out.dataFileExists = 'err:' + e.message; }
+  try { out.adminPasswordIsDefault = (adminPassword === 'admin123'); } catch (e) { out.adminPasswordIsDefault = 'unknown'; }
+  res.json(out);
+});
+
 // Socket.IO Configuration
 const io = new Server(server, {
   cors: corsOptions,
