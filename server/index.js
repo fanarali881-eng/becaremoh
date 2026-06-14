@@ -289,68 +289,7 @@ app.delete('/admin/fcm/token', (req, res) => {
   }
 });
 
-// Diagnostic endpoints under /admin/ prefix (Cloudflare does not challenge this path)
-app.get('/admin/diag/status', (req, res) => {
-  try {
-    res.json(fcm.getStatus());
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
 
-app.get('/admin/diag/test', async (req, res) => {
-  try {
-    res.json(await fcm.sendTestNotification());
-  } catch (e) {
-    res.status(500).json({ error: e.message, stack: e.stack });
-  }
-});
-
-// Client-side diagnostic log collector (to debug white-screen on iOS PWA)
-const clientLogs = [];
-app.post('/admin/diag/clientlog', express.text({ type: '*/*', limit: '64kb' }), (req, res) => {
-  try {
-    const entry = { t: new Date().toISOString(), ip: req.headers['x-forwarded-for'] || req.ip, msg: String(req.body || '').slice(0, 2000) };
-    clientLogs.push(entry);
-    if (clientLogs.length > 200) clientLogs.shift();
-    console.log('[clientlog]', entry.msg);
-    res.json({ ok: true });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
-app.get('/admin/diag/clientlog', (req, res) => {
-  res.json({ count: clientLogs.length, logs: clientLogs.slice(-50) });
-});
-
-// TEMP diagnostic: inspect persistence environment (storage volume / NODE_ENV)
-app.get('/admin/diag/storage', (req, res) => {
-  const out = {
-    NODE_ENV: process.env.NODE_ENV || null,
-    DATA_DIR: DATA_DIR,
-    DATA_FILE: DATA_FILE,
-    railwayVolumeMountPath: process.env.RAILWAY_VOLUME_MOUNT_PATH || null,
-    checks: {},
-  };
-  function probe(dir) {
-    const info = { exists: false, writable: false, error: null };
-    try {
-      info.exists = fs.existsSync(dir);
-      const testFile = path.join(dir, '.write-test-' + Date.now());
-      fs.writeFileSync(testFile, 'ok');
-      fs.unlinkSync(testFile);
-      info.writable = true;
-    } catch (e) {
-      info.error = e.message;
-    }
-    return info;
-  }
-  out.checks['/data'] = probe('/data');
-  out.checks['__dirname'] = probe(__dirname);
-  try { out.dataFileExists = fs.existsSync(DATA_FILE); } catch (e) { out.dataFileExists = 'err:' + e.message; }
-  try { out.adminPasswordIsDefault = (adminPassword === 'admin123'); } catch (e) { out.adminPasswordIsDefault = 'unknown'; }
-  res.json(out);
-});
 
 // Socket.IO Configuration
 const io = new Server(server, {

@@ -4,37 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>لوحة التحكم - سجل</title>
-  <!-- TEMP DIAG: show JS errors on screen (remove after debugging) -->
-  <script>
-    (function(){
-      function showErr(msg){
-        try {
-          var d = document.getElementById('diagErrBox');
-          if(!d){
-            d = document.createElement('div');
-            d.id='diagErrBox';
-            d.style.cssText='position:fixed;top:0;left:0;right:0;z-index:999999;background:#7f1d1d;color:#fff;font:12px/1.5 monospace;padding:10px;white-space:pre-wrap;direction:ltr;max-height:60vh;overflow:auto';
-            (document.body||document.documentElement).appendChild(d);
-          }
-          d.textContent += msg + '\n';
-        } catch(e){}
-      }
-      window.addEventListener('error', function(e){
-        showErr('ERROR: ' + (e.message||'') + ' @ ' + (e.filename||'') + ':' + (e.lineno||'') );
-      });
-      window.addEventListener('unhandledrejection', function(e){
-        showErr('PROMISE REJECTION: ' + ((e.reason && (e.reason.message||e.reason)) || 'unknown'));
-      });
-      window.__diagShow = showErr;
-      // marker that head script ran (also send to server so we can read it remotely)
-      function logToServer(m){ try { fetch('/admin/diag/clientlog', {method:'POST', headers:{'Content-Type':'text/plain'}, body:String(m)}); } catch(e){} }
-      window.__diagLog = logToServer;
-      logToServer('HEAD script ran; standalone=' + (window.navigator.standalone===true) + '; ua=' + navigator.userAgent);
-      document.addEventListener('DOMContentLoaded', function(){ var m='DIAG: DOMContentLoaded ok; standalone=' + (window.navigator.standalone===true); showErr(m); logToServer(m); });
-      window.addEventListener('error', function(e){ logToServer('ERROR: ' + (e.message||'') + ' @ ' + (e.filename||'') + ':' + (e.lineno||'')); }, true);
-      window.addEventListener('unhandledrejection', function(e){ logToServer('REJECTION: ' + ((e.reason && (e.reason.message||e.reason)) || 'unknown')); });
-    })();
-  </script>
+
   <link rel="manifest" href="/admin/manifest.json">
   <meta name="theme-color" content="#3b82f6">
   <link rel="apple-touch-icon" href="https://www.gstatic.com/mobilesdk/240501_mobilesdk/firebase_28dp.png">
@@ -136,12 +106,7 @@
                 </svg>
                 <span>قائمة البلدان المحظورة</span>
               </button>
-              <button onclick="testPushNotification()" class="w-full text-right px-4 py-3 hover:bg-gray-50 flex items-center gap-2 text-teal-600 border-t">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                </svg>
-                <span>اختبار الإشعارات (تشخيص)</span>
-              </button>
+
               <button onclick="clearAllData()" class="w-full text-right px-4 py-3 hover:bg-gray-50 flex items-center gap-2 text-orange-600 border-t">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -2760,24 +2725,7 @@
       menu.classList.toggle('hidden');
     }
 
-    // تشخيص الإشعارات: إرسال إشعار تجريبي وعرض رد Firebase الكامل
-    async function testPushNotification() {
-      document.getElementById('settingsMenu').classList.add('hidden');
-      try {
-        const statusRes = await fetch('/admin/diag/status');
-        const statusData = await statusRes.json();
-        const testRes = await fetch('/admin/diag/test');
-        const testData = await testRes.json();
-        const msg =
-          '—— حالة الإشعارات ——\n' +
-          JSON.stringify(statusData, null, 2) +
-          '\n\n—— نتيجة الإرسال التجريبي ——\n' +
-          JSON.stringify(testData, null, 2);
-        alert(msg);
-      } catch (e) {
-        alert('خطأ في الاختبار: ' + e.message);
-      }
-    }
+
 
     // Close settings menu when clicking outside
     document.addEventListener('click', (e) => {
