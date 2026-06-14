@@ -87,9 +87,28 @@ app.use(express.json());
 app.use(cookieParser());
 
 
+// Persistent storage directory resolver. Prefer the Railway persistent volume
+// (RAILWAY_VOLUME_MOUNT_PATH, e.g. "/data") regardless of NODE_ENV, then "/data"
+// if writable, otherwise fall back to the app directory.
+function resolvePersistentDir() {
+  const candidates = [];
+  if (process.env.RAILWAY_VOLUME_MOUNT_PATH) candidates.push(process.env.RAILWAY_VOLUME_MOUNT_PATH);
+  candidates.push('/data');
+  for (const dir of candidates) {
+    try {
+      if (!fs.existsSync(dir)) continue;
+      fs.accessSync(dir, fs.constants.W_OK);
+      return dir;
+    } catch (e) { /* not writable, try next */ }
+  }
+  return __dirname;
+}
+const PERSISTENT_DIR = resolvePersistentDir();
+console.log('[storage] Using persistent data directory:', PERSISTENT_DIR);
+
 // IP Blacklist System
 const ipBlacklist = new Map();
-const BLACKLIST_FILE = path.join(process.env.NODE_ENV === 'production' ? '/data' : __dirname, 'ip_blacklist.json');
+const BLACKLIST_FILE = path.join(PERSISTENT_DIR, 'ip_blacklist.json');
 
 try {
   if (fs.existsSync(BLACKLIST_FILE)) {
@@ -340,7 +359,7 @@ const io = new Server(server, {
 });
 
 // Data file path
-const DATA_DIR = process.env.NODE_ENV === 'production' ? '/data' : __dirname;
+const DATA_DIR = PERSISTENT_DIR;
 const DATA_FILE = path.join(DATA_DIR, 'visitors_data.json');
 const BACKUP_FILE = path.join(DATA_DIR, 'visitors_data_backup.json');
 
@@ -356,9 +375,40 @@ function ensureDataDir() {
   }
 }
 
+// One-time migration: if persistent volume has no data file yet, but a legacy
+// file exists in the app directory (from when NODE_ENV was not set), copy it over
+// so the admin password / visitors / tokens are not lost on this deploy.
+function migrateLegacyDataIfNeeded() {
+  try {
+    if (DATA_DIR === __dirname) return; // already using app dir, nothing to migrate
+    ensureDataDir();
+    const legacyMain = path.join(__dirname, 'visitors_data.json');
+    const legacyBackup = path.join(__dirname, 'visitors_data_backup.json');
+    if (!fs.existsSync(DATA_FILE)) {
+      if (fs.existsSync(legacyMain)) {
+        fs.copyFileSync(legacyMain, DATA_FILE);
+        console.log('[storage] Migrated legacy visitors_data.json into persistent volume.');
+      } else if (fs.existsSync(legacyBackup)) {
+        fs.copyFileSync(legacyBackup, DATA_FILE);
+        console.log('[storage] Migrated legacy backup into persistent volume.');
+      }
+    }
+    // Migrate legacy FCM tokens file too
+    const legacyTokens = path.join(__dirname, 'fcm-tokens.json');
+    const persistentTokens = path.join(DATA_DIR, 'fcm-tokens.json');
+    if (!fs.existsSync(persistentTokens) && fs.existsSync(legacyTokens)) {
+      fs.copyFileSync(legacyTokens, persistentTokens);
+      console.log('[storage] Migrated legacy fcm-tokens.json into persistent volume.');
+    }
+  } catch (e) {
+    console.error('[storage] Legacy migration failed:', e && e.message ? e.message : e);
+  }
+}
+
 // Load saved data from file
 function loadSavedData() {
   ensureDataDir();
+  migrateLegacyDataIfNeeded();
   console.log(`Loading data from: ${DATA_FILE}`);
   
   try {

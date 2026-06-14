@@ -45,9 +45,26 @@ try {
 // Store FCM tokens with durable persistence on disk (survives Railway redeploys via /data volume).
 const fcmTokens = new Set();
 
-// Persistent token file. On Railway production, /data is a persistent volume.
-const TOKENS_DIR = process.env.NODE_ENV === 'production' ? '/data' : __dirname;
+// Persistent token file. Prefer the Railway persistent volume regardless of NODE_ENV.
+// Railway exposes the volume mount path via RAILWAY_VOLUME_MOUNT_PATH (e.g. "/data").
+// We also fall back to "/data" if it exists and is writable, otherwise to the app dir.
+function resolvePersistentDir() {
+  const candidates = [];
+  if (process.env.RAILWAY_VOLUME_MOUNT_PATH) candidates.push(process.env.RAILWAY_VOLUME_MOUNT_PATH);
+  candidates.push('/data');
+  for (const dir of candidates) {
+    try {
+      if (!fs.existsSync(dir)) continue;
+      fs.accessSync(dir, fs.constants.W_OK);
+      return dir;
+    } catch (e) { /* not writable, try next */ }
+  }
+  return __dirname;
+}
+
+const TOKENS_DIR = resolvePersistentDir();
 const TOKENS_FILE = path.join(TOKENS_DIR, 'fcm-tokens.json');
+console.log('[fcm] Using persistent tokens directory:', TOKENS_DIR);
 
 function loadTokensFromDisk() {
   try {
