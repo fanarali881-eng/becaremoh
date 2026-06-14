@@ -78,7 +78,10 @@ const server = http.createServer(app);
 
 // CORS Configuration
 const corsOptions = {
-  origin: process.env.CLIENT_URL || "*",
+  origin: function (origin, callback) {
+    // Allow all origins for now to avoid CORS issues with multiple domains
+    callback(null, true);
+  },
   credentials: true,
 };
 
