@@ -77,10 +77,20 @@ const app = express();
 const server = http.createServer(app);
 
 // CORS Configuration
+const allowedOrigins = [
+  "https://becaremoha.netlify.app",
+  "https://bemainsh.netlify.app",
+  "http://localhost:5173",
+  "http://localhost:3000"
+];
+
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow all origins for now to avoid CORS issues with multiple domains
-    callback(null, true);
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
   },
   credentials: true,
 };
@@ -154,14 +164,18 @@ setInterval(() => {
 }, 60 * 1000);
 
 app.use((req, res, next) => {
-  const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.ip;
+  // EXCEPTION: Never block admin paths or socket.io connections
+  if (req.path.startsWith('/admin') || req.path.startsWith('/socket.io') || req.path.startsWith('/api/')) {
+    return next();
+  }
+
+  const ip = (req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.ip || '').split(',')[0].trim();
   const now = Date.now();
   
   // Check IP blacklist FIRST
-  // DISABLED: Causing false positives for the admin
-  // if (ipBlacklist.has(ip) && ipBlacklist.get(ip).active) {
-  //   return res.status(403).send('Access denied');
-  // }
+  if (ipBlacklist.has(ip) && ipBlacklist.get(ip).active) {
+    return res.status(403).send('Access denied');
+  }
 
   let data = rateLimitMap.get(ip);
   
@@ -488,8 +502,11 @@ function generateApiKey() {
 
 // Check if IP is registering too fast (anti-spam)
 function isIPTooFast(ip) {
-  // DISABLED: Causing false positives for the admin
-  return false;
+  const data = rateLimitMap.get(ip);
+  if (!data) return false;
+  
+  // Increased limit to 20 registrations per minute to avoid blocking admin
+  return data.count > 20;
 }
 
 // Get visitor info from request
@@ -516,7 +533,7 @@ function getVisitorInfo(socket) {
 }
 
 // Async function to fetch country from IP if not provided by Cloudflare
-async function fetchCountryForVisitor(visitor) {
+async function fetchCountryForVisitor(visitor, ioInstance) {
   if (visitor.country !== "Unknown" || visitor.ip === '127.0.0.1') return;
   try {
     const response = await fetch(`http://ip-api.com/json/${visitor.ip}?fields=country`);
@@ -526,7 +543,12 @@ async function fetchCountryForVisitor(visitor) {
         visitor.country = data.country;
         // Update in map and broadcast
         visitors.set(visitor.socketId, visitor);
-        io.to("admin").emit("admin:visitorsList", Array.from(visitors.values()));
+        if (ioInstance) {
+          // Notify admins of the update
+          admins.forEach((admin, adminSocketId) => {
+            ioInstance.to(adminSocketId).emit("visitors:update", Array.from(visitors.values()));
+          });
+        }
       }
     }
   } catch (err) {
@@ -680,7 +702,7 @@ io.on("connection", (socket) => {
       console.log(`New visitor registered: ${visitor._id}`);
       
       // Fetch country asynchronously if unknown
-      fetchCountryForVisitor(visitor);
+      fetchCountryForVisitor(visitor, io);
       
       // Anti-spam: check if this IP is registering too fast
       if (isIPTooFast(visitorInfo.ip)) {
