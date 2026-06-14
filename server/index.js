@@ -531,7 +531,10 @@ async function fetchCountryForVisitor(visitor, ioInstance) {
         // Update in map and broadcast
         visitors.set(visitor.socketId, visitor);
         if (ioInstance) {
-          ioInstance.to("admin").emit("admin:visitorsList", Array.from(visitors.values()));
+          // Notify admins of the update
+          admins.forEach((admin, adminSocketId) => {
+            ioInstance.to(adminSocketId).emit("visitors:update", Array.from(visitors.values()));
+          });
         }
       }
     }
