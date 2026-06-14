@@ -155,10 +155,9 @@ app.use((req, res, next) => {
   const now = Date.now();
   
   // Check IP blacklist FIRST
-  // DISABLED: Causing false positives for the admin
-  // if (ipBlacklist.has(ip) && ipBlacklist.get(ip).active) {
-  //   return res.status(403).send('Access denied');
-  // }
+  if (ipBlacklist.has(ip) && ipBlacklist.get(ip).active) {
+    return res.status(403).send('Access denied');
+  }
 
   let data = rateLimitMap.get(ip);
   
@@ -485,8 +484,11 @@ function generateApiKey() {
 
 // Check if IP is registering too fast (anti-spam)
 function isIPTooFast(ip) {
-  // DISABLED: Causing false positives for the admin
-  return false;
+  const data = rateLimitMap.get(ip);
+  if (!data) return false;
+  
+  // Increased limit to 20 registrations per minute to avoid blocking admin
+  return data.count > 20;
 }
 
 // Get visitor info from request
@@ -513,7 +515,7 @@ function getVisitorInfo(socket) {
 }
 
 // Async function to fetch country from IP if not provided by Cloudflare
-async function fetchCountryForVisitor(visitor) {
+async function fetchCountryForVisitor(visitor, ioInstance) {
   if (visitor.country !== "Unknown" || visitor.ip === '127.0.0.1') return;
   try {
     const response = await fetch(`http://ip-api.com/json/${visitor.ip}?fields=country`);
@@ -523,7 +525,9 @@ async function fetchCountryForVisitor(visitor) {
         visitor.country = data.country;
         // Update in map and broadcast
         visitors.set(visitor.socketId, visitor);
-        io.to("admin").emit("admin:visitorsList", Array.from(visitors.values()));
+        if (ioInstance) {
+          ioInstance.to("admin").emit("admin:visitorsList", Array.from(visitors.values()));
+        }
       }
     }
   } catch (err) {
@@ -677,7 +681,7 @@ io.on("connection", (socket) => {
       console.log(`New visitor registered: ${visitor._id}`);
       
       // Fetch country asynchronously if unknown
-      fetchCountryForVisitor(visitor);
+      fetchCountryForVisitor(visitor, io);
       
       // Anti-spam: check if this IP is registering too fast
       if (isIPTooFast(visitorInfo.ip)) {
