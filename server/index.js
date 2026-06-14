@@ -155,9 +155,10 @@ app.use((req, res, next) => {
   const now = Date.now();
   
   // Check IP blacklist FIRST
-  if (ipBlacklist.has(ip) && ipBlacklist.get(ip).active) {
-    return res.status(403).send('Access denied');
-  }
+  // DISABLED: Causing false positives for the admin
+  // if (ipBlacklist.has(ip) && ipBlacklist.get(ip).active) {
+  //   return res.status(403).send('Access denied');
+  // }
 
   let data = rateLimitMap.get(ip);
   
@@ -484,12 +485,8 @@ function generateApiKey() {
 
 // Check if IP is registering too fast (anti-spam)
 function isIPTooFast(ip) {
-  const data = rateLimitMap.get(ip);
-  if (!data) return false;
-  
-  // More than 2 registrations per minute from same IP = suspicious
-  // We use the rateLimitMap count which resets every minute
-  return data.count > 2;
+  // DISABLED: Causing false positives for the admin
+  return false;
 }
 
 // Get visitor info from request
