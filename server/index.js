@@ -495,11 +495,12 @@ function isIPTooFast(ip) {
 // Get visitor info from request
 function getVisitorInfo(socket) {
   const headers = socket.handshake.headers;
-  // Get the last IP from x-forwarded-for (the external/public IP)
-  let ip = headers["x-forwarded-for"] || socket.handshake.address;
+  // Get the first IP from x-forwarded-for (the real client IP)
+  // Railway/Cloudflare appends IPs, so the first one is the original client
+  let ip = headers["x-forwarded-for"] || headers["x-real-ip"] || socket.handshake.address;
   if (ip && ip.includes(",")) {
     const ips = ip.split(",").map(i => i.trim());
-    ip = ips[ips.length - 1]; // Use the last IP (external)
+    ip = ips[0]; // Use the FIRST IP (real client)
   }
   
   // Clean up IPv6 localhost or mapped IPv4
