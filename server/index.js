@@ -151,11 +151,6 @@ setInterval(() => {
 }, 60 * 1000);
 
 app.use((req, res, next) => {
-  // EXCEPTION: Never block admin paths or socket.io connections
-  if (req.path.startsWith('/admin') || req.path.startsWith('/socket.io') || req.path.startsWith('/api/')) {
-    return next();
-  }
-
   const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.ip;
   const now = Date.now();
   
