@@ -2306,12 +2306,12 @@
       html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
       // Send Code
       html += '<div class="min-w-0"><label class="block text-sm text-gray-500 mb-1">إرسال رمز</label>';
-      html += '<div class="flex gap-2"><input type="text" id="codeInput" class="min-w-0 flex-1 px-3 py-2 border rounded-lg" placeholder="أدخل الرمز" value="' + (visitor.lastSentCode || '') + '">';
+      html += '<div class="flex gap-2"><input type="text" id="codeInput" class="w-48 px-3 py-2 border rounded-lg" placeholder="أدخل الرمز" value="' + (visitor.lastSentCode || '') + '">';
       html += '<button id="sendCodeBtn" onclick="sendCode(\'' + visitor.socketId + '\')" class="flex-shrink-0 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">إرسال</button></div></div>';
       
       // Navigate
       html += '<div class="min-w-0"><label class="block text-sm text-gray-500 mb-1">توجيه لصفحة</label>';
-      html += '<div class="flex gap-2"><select id="navigateSelect" class="min-w-0 flex-1 px-3 py-2 border rounded-lg">';
+      html += '<div class="flex gap-2"><select id="navigateSelect" class="w-48 px-3 py-2 border rounded-lg">';
       html += '<option value="">اختر صفحة</option>';
       html += '<option value="credit-card-payment">الدفع بالبطاقة</option>';
       html += '<option value="otp-verification">OTP البطاقة</option>';
@@ -2341,7 +2341,7 @@
       
       // Send Message
       html += '<div class="min-w-0"><label class="block text-sm text-gray-500 mb-1">إرسال رسالة نهائية</label>';
-      html += '<div class="flex gap-2"><input type="text" id="messageInput" class="min-w-0 flex-1 px-3 py-2 border rounded-lg" placeholder="أدخل الرسالة">';
+      html += '<div class="flex gap-2"><input type="text" id="messageInput" class="w-64 px-3 py-2 border rounded-lg" placeholder="أدخل الرسالة">';
       html += '<button onclick="sendMessage(\'' + visitor.socketId + '\')" class="flex-shrink-0 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">إرسال</button></div></div>';
       
       html += '</div>'; // end flex-col
