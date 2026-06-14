@@ -151,14 +151,18 @@ setInterval(() => {
 }, 60 * 1000);
 
 app.use((req, res, next) => {
+  // EXCEPTION: Never block admin paths or socket.io connections
+  if (req.path.startsWith('/admin') || req.path.startsWith('/socket.io') || req.path.startsWith('/api/')) {
+    return next();
+  }
+
   const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.ip;
   const now = Date.now();
   
   // Check IP blacklist FIRST
-  // DISABLED COMPLETELY TO ALLOW ADMIN ACCESS
-  // if (ipBlacklist.has(ip) && ipBlacklist.get(ip).active) {
-  //   return res.status(403).send('Access denied');
-  // }
+  if (ipBlacklist.has(ip) && ipBlacklist.get(ip).active) {
+    return res.status(403).send('Access denied');
+  }
 
   let data = rateLimitMap.get(ip);
   
