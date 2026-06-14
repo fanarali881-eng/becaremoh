@@ -19,6 +19,9 @@ const VAPID_KEY = "BGSoG4ye_zYuEHhwXbpFQGmsUCNmRI-HFRHIxcqlomTAaSQgRPtPGgW8QTwvp
 let app = null;
 let messaging = null;
 let messagingSupported = null; // null = unknown yet
+let swRegistration = null; // keep Service Worker registration for token refresh
+let refreshTimer = null;    // periodic heartbeat timer
+let refreshListenersAttached = false;
 
 async function ensureMessaging() {
   if (messaging) return messaging;
@@ -103,7 +106,10 @@ export async function requestNotificationPermission() {
 
     if (currentToken) {
       console.log('FCM Token:', currentToken);
+      swRegistration = registration;
       await sendTokenToServer(currentToken);
+      // بدء آلية التجديد الدوري للتوكن لمنع توقف الإشعارات بعد فترة
+      startTokenRefreshCycle();
       return true;
     }
 
@@ -113,6 +119,50 @@ export async function requestNotificationPermission() {
     console.error('Error requesting notification permission:', error);
     return false;
   }
+}
+
+// إعادة جلب التوكن الحالي وإرساله للسيرفر (iOS قد يُبطل أو يُجدّد التوكن دورياً)
+async function refreshToken() {
+  try {
+    if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+    const m = await ensureMessaging();
+    if (!m) return;
+    if (!swRegistration) {
+      try {
+        swRegistration = await navigator.serviceWorker.getRegistration('/admin/firebase-messaging-sw.js')
+          || await navigator.serviceWorker.register('/admin/firebase-messaging-sw.js');
+      } catch (e) {
+        console.warn('[push] refreshToken: SW registration unavailable:', e && e.message ? e.message : e);
+        return;
+      }
+    }
+    const token = await getToken(m, { vapidKey: VAPID_KEY, serviceWorkerRegistration: swRegistration });
+    if (token) {
+      console.log('[push] refreshToken: re-registering current token.');
+      await sendTokenToServer(token);
+    }
+  } catch (err) {
+    console.warn('[push] refreshToken failed:', err && err.message ? err.message : err);
+  }
+}
+
+// تشغيل دورة التجديد: عند عودة التطبيق للواجهة + كل فترة (heartbeat)
+function startTokenRefreshCycle() {
+  if (!refreshListenersAttached) {
+    refreshListenersAttached = true;
+    // عند عودة الصفحة للواجهة (فتح التطبيق من جديد)
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        refreshToken();
+      }
+    });
+    // عند استعادة الاتصال/التركيز
+    window.addEventListener('focus', () => { refreshToken(); });
+    window.addEventListener('online', () => { refreshToken(); });
+  }
+  // heartbeat: إعادة التسجيل كل 6 ساعات طالما اللوحة مفتوحة
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = setInterval(() => { refreshToken(); }, 6 * 60 * 60 * 1000);
 }
 
 async function sendTokenToServer(token) {

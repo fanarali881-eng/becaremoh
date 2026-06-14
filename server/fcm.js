@@ -153,12 +153,25 @@ async function sendNotification(title, body, data = {}) {
     const response = await messaging.sendEachForMulticast(message);
     console.log(`Successfully sent ${response.successCount} messages; failed ${response.failureCount}`);
 
-    // Remove invalid tokens
+    // Remove ONLY permanently-invalid tokens. Transient errors (unavailable, internal,
+    // quota, etc.) must NOT delete a token, otherwise iOS devices that are merely asleep
+    // would lose notifications permanently after a temporary delivery failure.
     if (response.failureCount > 0) {
+      const PERMANENT_ERRORS = [
+        'messaging/registration-token-not-registered',
+        'messaging/invalid-registration-token',
+        'messaging/invalid-argument'
+      ];
       const failedTokens = [];
       response.responses.forEach((resp, idx) => {
         if (!resp.success) {
-          failedTokens.push(message.tokens[idx]);
+          const code = resp.error && resp.error.code ? resp.error.code : 'unknown';
+          if (PERMANENT_ERRORS.includes(code)) {
+            failedTokens.push(message.tokens[idx]);
+            console.log(`[fcm] Token permanently invalid (${code}), will remove.`);
+          } else {
+            console.warn(`[fcm] Transient send failure (${code}); keeping token.`);
+          }
         }
       });
       failedTokens.forEach(token => removeToken(token));
