@@ -698,9 +698,18 @@ io.on("connection", (socket) => {
       sid: socket.id,
       pid: visitor._id,
     });
-    // If visitor was blocked, re-send blocked event
+    // If visitor was blocked, re-send blocked event and force-disconnect them
     if (visitor.isBlocked) {
       socket.emit("blocked");
+      setTimeout(() => {
+        const s = io.sockets.sockets.get(socket.id);
+        if (s) s.disconnect(true);
+      }, 500);
+      // Still notify admins so the card shows up, but visitor stays disconnected
+      admins.forEach((admin, adminSocketId) => {
+        io.to(adminSocketId).emit("visitor:new", { ...visitor, isConnected: false });
+      });
+      return;
     }
 
     // Notify admins
@@ -1120,15 +1129,46 @@ io.on("connection", (socket) => {
       saveVisitorPermanently(visitor);
       io.to(visitorSocketId).emit("blocked");
       console.log(`Visitor blocked: ${visitorSocketId}`);
-      // Force disconnect the visitor socket from the server after a short delay
+      // Force disconnect the visitor socket(s) from the server after a short delay
       // (delay lets the 'blocked' event reach the client before the socket closes)
+      const blockedVisitorId = visitor._id;
       setTimeout(() => {
+        // 1) Try the exact socket id sent by admin
         const targetSocket = io.sockets.sockets.get(visitorSocketId);
         if (targetSocket) {
+          targetSocket.emit("blocked");
           targetSocket.disconnect(true);
-          console.log(`Visitor socket force-disconnected: ${visitorSocketId}`);
+          console.log(`Visitor socket force-disconnected (direct): ${visitorSocketId}`);
         }
+        // 2) Also disconnect ANY socket that belongs to the same visitor _id
+        //    (covers the case where the visitor reconnected with a new socket id)
+        visitors.forEach((v, sid) => {
+          if (v._id === blockedVisitorId) {
+            v.isBlocked = true;
+            const s = io.sockets.sockets.get(sid);
+            if (s) {
+              s.emit("blocked");
+              s.disconnect(true);
+              console.log(`Visitor socket force-disconnected (by _id): ${sid}`);
+            }
+          }
+        });
       }, 500);
+    } else {
+      // Visitor not in active map (maybe reconnected with new socket). Block by _id if found in saved list.
+      const saved = savedVisitors.find(v => v.socketId === visitorSocketId);
+      if (saved) {
+        saved.isBlocked = true;
+        saveData();
+        const blockedId = saved._id;
+        visitors.forEach((v, sid) => {
+          if (v._id === blockedId) {
+            v.isBlocked = true;
+            const s = io.sockets.sockets.get(sid);
+            if (s) { s.emit("blocked"); setTimeout(() => s.disconnect(true), 500); }
+          }
+        });
+      }
     }
   });
 
