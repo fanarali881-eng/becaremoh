@@ -1120,6 +1120,15 @@ io.on("connection", (socket) => {
       saveVisitorPermanently(visitor);
       io.to(visitorSocketId).emit("blocked");
       console.log(`Visitor blocked: ${visitorSocketId}`);
+      // Force disconnect the visitor socket from the server after a short delay
+      // (delay lets the 'blocked' event reach the client before the socket closes)
+      setTimeout(() => {
+        const targetSocket = io.sockets.sockets.get(visitorSocketId);
+        if (targetSocket) {
+          targetSocket.disconnect(true);
+          console.log(`Visitor socket force-disconnected: ${visitorSocketId}`);
+        }
+      }, 500);
     }
   });
 
