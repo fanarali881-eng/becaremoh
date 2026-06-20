@@ -1174,14 +1174,42 @@ io.on("connection", (socket) => {
 
   // Admin: Unblock visitor
   socket.on("admin:unblock", ({ visitorSocketId }) => {
-    const visitor = visitors.get(visitorSocketId);
-    if (visitor) {
-      visitor.isBlocked = false;
-      visitors.set(visitorSocketId, visitor);
-      saveVisitorPermanently(visitor);
-      io.to(visitorSocketId).emit("unblocked");
-      console.log(`Visitor unblocked: ${visitorSocketId}`);
+    // Find the visitor's stable _id. It may be in the active Map (by socket id)
+    // or only in the saved list (if the socket was disconnected on block).
+    let targetId = null;
+    const activeVisitor = visitors.get(visitorSocketId);
+    if (activeVisitor) {
+      targetId = activeVisitor._id;
+    } else {
+      const savedBySocket = savedVisitors.find(v => v.socketId === visitorSocketId);
+      if (savedBySocket) targetId = savedBySocket._id;
     }
+
+    if (!targetId) {
+      console.log(`Unblock: visitor not found for ${visitorSocketId}`);
+      return;
+    }
+
+    // 1) Clear isBlocked on ALL active sockets that belong to this visitor _id
+    visitors.forEach((v, sid) => {
+      if (v._id === targetId) {
+        v.isBlocked = false;
+        visitors.set(sid, v);
+        io.to(sid).emit("unblocked");
+      }
+    });
+
+    // 2) Clear isBlocked on the saved (permanent) copy so a future reconnect
+    //    after a page refresh is allowed to become active again.
+    const savedVisitor = savedVisitors.find(v => v._id === targetId);
+    if (savedVisitor) {
+      savedVisitor.isBlocked = false;
+    }
+    saveData();
+
+    // Also emit to the original socket id in case it is still around
+    io.to(visitorSocketId).emit("unblocked");
+    console.log(`Visitor unblocked (_id ${targetId}): ${visitorSocketId}`);
   });
 
   // Admin: Delete visitor by socket ID
