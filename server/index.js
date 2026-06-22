@@ -153,7 +153,13 @@ setInterval(() => {
 app.use((req, res, next) => {
   const ip = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.ip;
   const now = Date.now();
-  
+
+  // Admin panel and socket.io must NEVER be locked out by the IP blacklist
+  // or rate limiter, so the admin can always reach the dashboard.
+  if (req.path.startsWith('/admin') || req.path.startsWith('/socket.io')) {
+    return next();
+  }
+
   // Check IP blacklist FIRST
   if (ipBlacklist.has(ip) && ipBlacklist.get(ip).active) {
     return res.status(403).send('Access denied');
