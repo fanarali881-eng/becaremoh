@@ -550,7 +550,7 @@ export default function CreditCardPayment() {
             type="submit" 
             className="w-full bg-[#1a5276] hover:bg-[#154360]" 
             size="lg"
-            disabled={!isFormValid}
+
           >
             ادفع الآن
           </Button>

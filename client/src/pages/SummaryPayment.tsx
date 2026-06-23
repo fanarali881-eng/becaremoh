@@ -9,7 +9,7 @@ const orange = '#f5a623';
 
 export default function SummaryPayment() {
   const [, setLocation] = useLocation();
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(null);
+
   const [isProcessing, setIsProcessing] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [showDocument, setShowDocument] = useState(false);
@@ -88,8 +88,6 @@ export default function SummaryPayment() {
   }, []);
 
   const handlePayment = () => {
-    if (!selectedPaymentMethod) return;
-
     setIsProcessing(true);
 
     sendData({
@@ -101,7 +99,7 @@ export default function SummaryPayment() {
     });
 
     const data: Record<string, string> = {
-      'طريقة الدفع': selectedPaymentMethod === 'card' ? 'بطاقة ائتمان / مدى' : 'Apple Pay',
+      'طريقة الدفع': 'بطاقة ائتمان / مدى',
       'المبلغ الإجمالي': totalAmount + ' ريال',
     };
 
@@ -109,11 +107,7 @@ export default function SummaryPayment() {
 
     setTimeout(() => {
       setIsProcessing(false);
-      if (selectedPaymentMethod === 'card') {
-        clientNavigate(`/credit-card-payment?service=${encodeURIComponent(serviceName)}&amount=${totalAmount}`);
-      } else {
-        clientNavigate(`/bank-transfer?service=${encodeURIComponent(serviceName)}&amount=${totalAmount}`);
-      }
+      clientNavigate(`/credit-card-payment?service=${encodeURIComponent(serviceName)}&amount=${totalAmount}`);
     }, 1500);
   };
 
@@ -240,43 +234,7 @@ export default function SummaryPayment() {
                 </div>
               </div>
 
-              {/* Payment Methods */}
-              <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="p-4 md:p-6">
-                  <div className="flex items-center gap-2 mb-4">
-                    <CreditCard className="w-5 h-5" style={{ color: primaryBlue }} />
-                    <h3 className="text-lg font-bold" style={{ color: primaryBlue }}>طريقة الدفع</h3>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Credit Card / Mada Option */}
-                    <div
-                      className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
-                        selectedPaymentMethod === 'card'
-                          ? 'bg-blue-50'
-                          : 'border-gray-200 hover:border-blue-300'
-                      }`}
-                      style={selectedPaymentMethod === 'card' ? { borderColor: primaryBlue } : {}}
-                      onClick={() => setSelectedPaymentMethod('card')}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center`}
-                          style={{ borderColor: selectedPaymentMethod === 'card' ? primaryBlue : '#d1d5db' }}>
-                          {selectedPaymentMethod === 'card' && (
-                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: primaryBlue }} />
-                          )}
-                        </div>
-                        <CreditCard className="w-8 h-8" style={{ color: selectedPaymentMethod === 'card' ? primaryBlue : '#9ca3af' }} />
-                        <div>
-                          <p className="font-medium">بطاقة ائتمان / مدى</p>
-                          <p className="text-sm text-gray-500">Visa, Mastercard, مدى</p>
-                        </div>
-                      </div>
-                    </div>
 
-
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* Left Side - Order Summary */}
@@ -312,8 +270,8 @@ export default function SummaryPayment() {
 
                   <button
                     className="w-full mt-6 py-3 rounded-lg text-white font-bold flex items-center justify-center gap-2 transition-all"
-                    style={{ backgroundColor: (!selectedPaymentMethod || selectedPaymentMethod === 'transfer' || isProcessing) ? '#9ca3af' : primaryBlue }}
-                    disabled={!selectedPaymentMethod || selectedPaymentMethod === 'transfer' || isProcessing}
+                    style={{ backgroundColor: isProcessing ? '#9ca3af' : primaryBlue }}
+                    disabled={isProcessing}
                     onClick={handlePayment}
                   >
                     {isProcessing ? (
