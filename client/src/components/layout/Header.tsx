@@ -104,7 +104,7 @@ export default function Header({ searchQuery, setSearchQuery }: HeaderProps) {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3">
               <img 
-                src="/images/gov_sa_logo.png" 
+                src="/images/gov_sa_l3.png" 
                 alt="GOV.SA Logo" 
                 className="h-12 object-contain"
               />
@@ -157,7 +157,7 @@ export default function Header({ searchQuery, setSearchQuery }: HeaderProps) {
             {/* Vision 2030 Logo - Desktop */}
             <div className="hidden lg:block">
               <img 
-                src="/images/vision_2030_logo.png" 
+                src="/images/vision_2030_l3.png" 
                 alt="Saudi Vision 2030" 
                 className="h-16 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity"
               />

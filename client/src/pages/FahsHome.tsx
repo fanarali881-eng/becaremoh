@@ -243,7 +243,7 @@ export default function FahsHome() {
 
   const arabicMonths = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 
-  // Colors from bcare.com.sa
+  // Colors
   const primaryBlue = "#146494";
   const darkBlue = "#0d4770";
   const accentOrange = "#f5a623";
@@ -257,7 +257,7 @@ export default function FahsHome() {
       <header className="bg-white py-3 md:py-4 px-4 lg:px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm">
         <div className="flex items-center gap-3">
           <Link to="/" className="cursor-pointer">
-            <img src="/images/bcare/Bcarelogo.svg" alt="بي كير" className="h-8 md:h-10" />
+            <img src="/images/a1/l1.svg" alt="بي كير" className="h-8 md:h-10" />
           </Link>
         </div>
         <div className="flex items-center gap-2 md:gap-3">
@@ -271,8 +271,8 @@ export default function FahsHome() {
       {/* Hero Section - Blue background */}
       <section className="relative" style={{ backgroundColor: primaryBlue, minHeight: window.innerWidth < 768 ? '320px' : '460px', overflow: 'visible' }}>
         {/* Background decorative SVGs */}
-        <img src="/images/bcare/LeftBackground.svg" alt="" className="absolute left-0 top-0 pointer-events-none z-[1]" style={{ height: window.innerWidth < 768 ? '60%' : '140%', opacity: window.innerWidth < 768 ? 0.08 : 0.12 }} />
-        <img src="/images/bcare/RightBackground.svg" alt="" className="absolute right-0 top-0 pointer-events-none z-[1]" style={{ height: window.innerWidth < 768 ? '60%' : '140%', opacity: window.innerWidth < 768 ? 0.08 : 0.12 }} />
+        <img src="/images/a1/b1.svg" alt="" className="absolute left-0 top-0 pointer-events-none z-[1]" style={{ height: window.innerWidth < 768 ? '60%' : '140%', opacity: window.innerWidth < 768 ? 0.08 : 0.12 }} />
+        <img src="/images/a1/b2.svg" alt="" className="absolute right-0 top-0 pointer-events-none z-[1]" style={{ height: window.innerWidth < 768 ? '60%' : '140%', opacity: window.innerWidth < 768 ? 0.08 : 0.12 }} />
         
         <div className="container mx-auto px-4 lg:px-8 pt-8 md:pt-12 pb-32 relative z-10 text-center">
           <h1 className="text-xl md:text-4xl lg:text-[42px] font-bold text-white leading-tight mb-3 md:mb-4 px-2 md:px-0" style={{ lineHeight: window.innerWidth < 768 ? '1.5' : '1.4' }}>
@@ -292,11 +292,11 @@ export default function FahsHome() {
           {/* Tabs */}
           <div className="flex justify-start bg-white overflow-x-auto md:overflow-visible scrollbar-hide px-2 md:px-8 pt-2" style={{ position: 'relative', borderRadius: '15px 15px 0 0', WebkitOverflowScrolling: 'touch' }}>
             {[
-              { id: "vehicles", label: "مركبات", icon: (<img src="/images/bcare/tab-car.svg" className="w-6 h-6 md:w-7 md:h-7" alt="مركبات" style={{ filter: 'inherit' }} />) },
-              { id: "medical", label: "طبي", icon: (<img src="/images/bcare/tab-heart-pulse.svg" className="w-6 h-6 md:w-7 md:h-7" alt="طبي" style={{ filter: 'inherit' }} />) },
-              { id: "malpractice", label: "اخطاء طبية", icon: (<img src="/images/bcare/tab-stethoscope.svg" className="w-6 h-6 md:w-7 md:h-7" alt="اخطاء طبية" style={{ filter: 'inherit' }} />) },
-              { id: "travel", label: "سفر", icon: (<img src="/images/bcare/tab-plane.svg" className="w-6 h-6 md:w-7 md:h-7" alt="سفر" style={{ filter: 'inherit' }} />) },
-              { id: "domestic", label: "العمالة المنزلية", icon: (<img src="/images/bcare/tab-house-user.svg" className="w-6 h-6 md:w-7 md:h-7" alt="العمالة المنزلية" style={{ filter: 'inherit' }} />) },
+              { id: "vehicles", label: "مركبات", icon: (<img src="/images/a1/t1.svg" className="w-6 h-6 md:w-7 md:h-7" alt="مركبات" style={{ filter: 'inherit' }} />) },
+              { id: "medical", label: "طبي", icon: (<img src="/images/a1/t2.svg" className="w-6 h-6 md:w-7 md:h-7" alt="طبي" style={{ filter: 'inherit' }} />) },
+              { id: "malpractice", label: "اخطاء طبية", icon: (<img src="/images/a1/tab-stethoscope.svg" className="w-6 h-6 md:w-7 md:h-7" alt="اخطاء طبية" style={{ filter: 'inherit' }} />) },
+              { id: "travel", label: "سفر", icon: (<img src="/images/a1/t5.svg" className="w-6 h-6 md:w-7 md:h-7" alt="سفر" style={{ filter: 'inherit' }} />) },
+              { id: "domestic", label: "العمالة المنزلية", icon: (<img src="/images/a1/t4.svg" className="w-6 h-6 md:w-7 md:h-7" alt="العمالة المنزلية" style={{ filter: 'inherit' }} />) },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -713,7 +713,7 @@ export default function FahsHome() {
 
       {/* Decorative SVGs on white background below the card */}
       <div className="relative" style={{ height: '0px', overflow: 'visible' }}>
-        <img src="/images/bcare/LeftBackground-blue.svg" alt="" className="pointer-events-none" style={{ height: window.innerWidth < 768 ? '300px' : '700px', opacity: window.innerWidth < 768 ? 0.06 : 0.12, position: 'absolute', left: '1%', top: window.innerWidth < 768 ? '-200px' : '-500px', zIndex: 1 }} />
+        <img src="/images/a1/b3.svg" alt="" className="pointer-events-none" style={{ height: window.innerWidth < 768 ? '300px' : '700px', opacity: window.innerWidth < 768 ? 0.06 : 0.12, position: 'absolute', left: '1%', top: window.innerWidth < 768 ? '-200px' : '-500px', zIndex: 1 }} />
       </div>
 
       {/* Partners Bar */}
@@ -725,10 +725,10 @@ export default function FahsHome() {
               <div className="flex-shrink-0 flex items-center gap-3 md:gap-4 md:pl-6">
                 <div className="relative" style={{ paddingTop: '16px' }}>
                   <span className="absolute text-[10px] md:text-xs font-bold" style={{ color: '#146494', top: '0', right: '0' }}>مصرح من:</span>
-                  <img src="/images/bcare/SaudiCentralImage.svg" alt="هيئة التأمين" className="h-10 md:h-14" />
+                  <img src="/images/a1/g1.svg" alt="هيئة التأمين" className="h-10 md:h-14" />
                 </div>
                 <div className="h-12 md:h-16 w-px bg-gray-300"></div>
-                <img src="/images/bcare/23arbic.svg" alt="23 شركة تأمين" className="h-16 md:h-24" />
+                <img src="/images/a1/g3.svg" alt="23 شركة تأمين" className="h-16 md:h-24" />
               </div>
               {/* Auto-scrolling company logos carousel */}
               <InsuranceLogosCarousel />
@@ -752,28 +752,28 @@ export default function FahsHome() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-3 md:mb-4 max-w-6xl mx-auto">
             <div className="bg-white px-2 md:px-3 py-6 md:py-12 text-center shadow-sm hover:shadow-md transition-shadow" style={{ borderRadius: '15px' }}>
               <div className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 md:mb-4 flex items-center justify-center">
-                <img src="/images/bcare/InsureOneMin.svg" alt="تأمينك في دقيقة" className="w-8 h-8 md:w-10 md:h-10" />
+                <img src="/images/a1/f1.svg" alt="تأمينك في دقيقة" className="w-8 h-8 md:w-10 md:h-10" />
               </div>
               <h3 className="font-bold mb-2 md:mb-3 text-sm md:text-xl" style={{ color: '#146494' }}>تأمينك في دقيقة</h3>
               <p className="text-xs md:text-lg leading-relaxed" style={{ color: '#146494' }}>نقارن لك كل عروض الأسعار بشكل فوري من كل شركات التأمين</p>
             </div>
             <div className="bg-white px-2 md:px-3 py-6 md:py-12 text-center shadow-sm hover:shadow-md transition-shadow" style={{ borderRadius: '15px' }}>
               <div className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 md:mb-4 flex items-center justify-center">
-                <img src="/images/bcare/SprateInsure.svg" alt="فصّل تأمينك" className="w-8 h-8 md:w-10 md:h-10" />
+                <img src="/images/a1/f2.svg" alt="فصّل تأمينك" className="w-8 h-8 md:w-10 md:h-10" />
               </div>
               <h3 className="font-bold mb-2 md:mb-3 text-sm md:text-xl" style={{ color: '#146494' }}>فصّل تأمينك</h3>
               <p className="text-xs md:text-lg leading-relaxed" style={{ color: '#146494' }}>أنواع تأمين متعددة: تأمين ضد الغير، تأمين مميز، تأمين شامل وقيمة تحمل متنوعة</p>
             </div>
             <div className="bg-white px-2 md:px-3 py-6 md:py-12 text-center shadow-sm hover:shadow-md transition-shadow" style={{ borderRadius: '15px' }}>
               <div className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 md:mb-4 flex items-center justify-center">
-                <img src="/images/bcare/PriceLess.svg" alt="أسعار أقل" className="w-8 h-8 md:w-10 md:h-10" />
+                <img src="/images/a1/f3.svg" alt="أسعار أقل" className="w-8 h-8 md:w-10 md:h-10" />
               </div>
               <h3 className="font-bold mb-2 md:mb-3 text-sm md:text-xl" style={{ color: '#146494' }}>أسعار أقل</h3>
               <p className="text-xs md:text-lg leading-relaxed" style={{ color: '#146494' }}>عندنا فريق يراقب كل صغيرة و كبيرة في السوق و يضمن أن سعرك الأقل و المناسب لك وفق احتياجك</p>
             </div>
             <div className="bg-white px-2 md:px-3 py-6 md:py-12 text-center shadow-sm hover:shadow-md transition-shadow" style={{ borderRadius: '15px' }}>
               <div className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 md:mb-4 flex items-center justify-center">
-                <img src="/images/bcare/SechleInsure.svg" alt="جدول تأمينك" className="w-8 h-8 md:w-10 md:h-10" />
+                <img src="/images/a1/f4.svg" alt="جدول تأمينك" className="w-8 h-8 md:w-10 md:h-10" />
               </div>
               <h3 className="font-bold mb-2 md:mb-3 text-sm md:text-xl" style={{ color: '#146494' }}>جدول تأمينك</h3>
               <p className="text-xs md:text-lg leading-relaxed" style={{ color: '#146494' }}>نرسل لك إشعارات تذكيرية لتجديد تأمينك وتقدر تجدول تاريخ بدايته</p>
@@ -784,28 +784,28 @@ export default function FahsHome() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 max-w-6xl mx-auto">
             <div className="bg-white px-2 md:px-3 py-6 md:py-12 text-center shadow-sm hover:shadow-md transition-shadow" style={{ borderRadius: '15px' }}>
               <div className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 md:mb-4 flex items-center justify-center">
-                <img src="/images/bcare/Wind.svg" alt="هب ريح" className="w-8 h-8 md:w-10 md:h-10" />
+                <img src="/images/a1/f5.svg" alt="هب ريح" className="w-8 h-8 md:w-10 md:h-10" />
               </div>
               <h3 className="font-bold mb-2 md:mb-3 text-sm md:text-xl" style={{ color: '#146494' }}>هب ريح</h3>
               <p className="text-xs md:text-lg leading-relaxed" style={{ color: '#146494' }}>نربط وثيقتك في أسرع وقت مع نظام المرور ونجم</p>
             </div>
             <div className="bg-white px-2 md:px-3 py-6 md:py-12 text-center shadow-sm hover:shadow-md transition-shadow" style={{ borderRadius: '15px' }}>
               <div className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 md:mb-4 flex items-center justify-center">
-                <img src="/images/bcare/DiscountsHome.svg" alt="خصومات تضبطك" className="w-8 h-8 md:w-10 md:h-10" />
+                <img src="/images/a1/f6.svg" alt="خصومات تضبطك" className="w-8 h-8 md:w-10 md:h-10" />
               </div>
               <h3 className="font-bold mb-2 md:mb-3 text-sm md:text-xl" style={{ color: '#146494' }}>خصومات تضبطك</h3>
               <p className="text-xs md:text-lg leading-relaxed" style={{ color: '#146494' }}>خصومات لبعض القطاعات الحكومية وشبه الحكومية والخاصة</p>
             </div>
             <div className="bg-white px-2 md:px-3 py-6 md:py-12 text-center shadow-sm hover:shadow-md transition-shadow" style={{ borderRadius: '15px' }}>
               <div className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 md:mb-4 flex items-center justify-center">
-                <img src="/images/bcare/Benfit.svg" alt="منافع تحميك" className="w-8 h-8 md:w-10 md:h-10" />
+                <img src="/images/a1/f7.svg" alt="منافع تحميك" className="w-8 h-8 md:w-10 md:h-10" />
               </div>
               <h3 className="font-bold mb-2 md:mb-3 text-sm md:text-xl" style={{ color: '#146494' }}>منافع تحميك</h3>
               <p className="text-xs md:text-lg leading-relaxed" style={{ color: '#146494' }}>خطط تأمين متنوعة مع المرونة في تحديد المنافع الإضافية اللي تناسبك</p>
             </div>
             <div className="bg-white px-2 md:px-3 py-6 md:py-12 text-center shadow-sm hover:shadow-md transition-shadow" style={{ borderRadius: '15px' }}>
               <div className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 md:mb-4 flex items-center justify-center">
-                <img src="/images/bcare/OneWay.svg" alt="مكان واحد" className="w-8 h-8 md:w-10 md:h-10" />
+                <img src="/images/a1/f8.svg" alt="مكان واحد" className="w-8 h-8 md:w-10 md:h-10" />
               </div>
               <h3 className="font-bold mb-2 md:mb-3 text-sm md:text-xl" style={{ color: '#146494' }}>مكان واحد</h3>
               <p className="text-xs md:text-lg leading-relaxed" style={{ color: '#146494' }}>تدير كل وثائقك إدارة إلكترونية كاملة من مكان واحد وتجددها في أي وقت</p>
@@ -823,37 +823,37 @@ export default function FahsHome() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 md:gap-x-28 gap-y-8 md:gap-y-16 max-w-5xl mx-auto">
             <div className="text-center">
               <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 flex items-center justify-center">
-                <img src="/images/bcare/saudi.svg" alt="منك وفيك" className="w-10 h-10 md:w-12 md:h-12" />
+                <img src="/images/a1/g5.svg" alt="منك وفيك" className="w-10 h-10 md:w-12 md:h-12" />
               </div>
               <h3 className="font-bold text-sm md:text-lg" style={{ color: '#146494' }}>منك وفيك</h3>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 flex items-center justify-center">
-                <img src="/images/bcare/catalog.svg" alt="عروض تفهمك" className="w-10 h-10 md:w-12 md:h-12" />
+                <img src="/images/a1/g6.svg" alt="عروض تفهمك" className="w-10 h-10 md:w-12 md:h-12" />
               </div>
               <h3 className="font-bold text-sm md:text-lg" style={{ color: '#146494' }}>عروض تفهمك</h3>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 flex items-center justify-center">
-                <img src="/images/bcare/payments_FILL0_wght400_GRAD0_opsz48.svg" alt="سعر يرضيك" className="w-10 h-10 md:w-12 md:h-12" />
+                <img src="/images/a1/g8.svg" alt="سعر يرضيك" className="w-10 h-10 md:w-12 md:h-12" />
               </div>
               <h3 className="font-bold text-sm md:text-lg" style={{ color: '#146494' }}>سعر يرضيك</h3>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 flex items-center justify-center">
-                <img src="/images/bcare/Group6518.svg" alt="إصدار سريع" className="w-10 h-10 md:w-12 md:h-12" />
+                <img src="/images/a1/g4.svg" alt="إصدار سريع" className="w-10 h-10 md:w-12 md:h-12" />
               </div>
               <h3 className="font-bold text-sm md:text-lg" style={{ color: '#146494' }}>إصدار سريع</h3>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 flex items-center justify-center">
-                <img src="/images/bcare/tachometer-alt-fastest.svg" alt="نقّسط تأمينك" className="w-10 h-10 md:w-12 md:h-12" />
+                <img src="/images/a1/g9.svg" alt="نقّسط تأمينك" className="w-10 h-10 md:w-12 md:h-12" />
               </div>
               <h3 className="font-bold text-sm md:text-lg" style={{ color: '#146494' }}>نقّسط تأمينك</h3>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 flex items-center justify-center">
-                <img src="/images/bcare/flame.svg" alt="نفزع لك" className="w-10 h-10 md:w-12 md:h-12" />
+                <img src="/images/a1/g7.svg" alt="نفزع لك" className="w-10 h-10 md:w-12 md:h-12" />
               </div>
               <h3 className="font-bold text-sm md:text-lg" style={{ color: '#146494' }}>نفزع لك</h3>
             </div>
@@ -870,16 +870,16 @@ export default function FahsHome() {
             <div className="flex flex-col md:flex-row gap-6 md:items-start">
               {/* BCare Logo + Phone */}
               <div className="text-right flex-shrink-0">
-                <img src="/images/bcare/Bcarelogo.svg" alt="بي كير" className="h-10 mb-3 brightness-0 invert" />
+                <img src="/images/a1/l1.svg" alt="بي كير" className="h-10 mb-3 brightness-0 invert" />
                 <p className="text-white text-lg font-bold mb-3" dir="ltr">☎ 8001180044</p>
                 {/* Payment Methods */}
-                <img src="/images/bcare/PaymentMethods1.svg" alt="طرق الدفع" className="h-8 mt-3" />
+                <img src="/images/a1/g2.svg" alt="طرق الدفع" className="h-8 mt-3" />
               </div>
               {/* App Stores stacked on desktop, row on mobile */}
               <div className="flex flex-row md:flex-col gap-2 flex-shrink-0">
-                <img src="/images/bcare/googlestore.svg" alt="Google Play" className="h-9 md:h-10 w-fit" />
-                <img src="/images/bcare/applestore.svg" alt="App Store" className="h-9 md:h-10 w-fit" />
-                <img src="/images/bcare/huaweistore.svg" alt="AppGallery" className="h-9 md:h-10 w-fit" />
+                <img src="/images/a1/s2.svg" alt="Google Play" className="h-9 md:h-10 w-fit" />
+                <img src="/images/a1/s1.svg" alt="App Store" className="h-9 md:h-10 w-fit" />
+                <img src="/images/a1/s3.svg" alt="AppGallery" className="h-9 md:h-10 w-fit" />
               </div>
             </div>
 
@@ -1004,23 +1004,23 @@ export default function FahsHome() {
 
 function InsuranceLogosCarousel() {
   const logos = [
-    { src: "/images/bcare/Tawuniya.svg", alt: "التعاونية" },
-    { src: "/images/bcare/AlRajhi.svg", alt: "الراجحي" },
-    { src: "/images/bcare/MedGulf.svg", alt: "ميدغلف" },
-    { src: "/images/bcare/GGI.svg", alt: "GIG" },
-    { src: "/images/bcare/Allianz.svg", alt: "أليانز" },
-    { src: "/images/bcare/ACIG.svg", alt: "ACIG" },
-    { src: "/images/bcare/Amana.svg", alt: "أمانة" },
-    { src: "/images/bcare/ArabianShield.svg", alt: "الدرع العربي" },
-    { src: "/images/bcare/UCA.svg", alt: "UCA" },
-    { src: "/images/bcare/Aljazira-Takaful.svg", alt: "الجزيرة تكافل" },
-    { src: "/images/bcare/Sagr.svg", alt: "الصقر" },
-    { src: "/images/bcare/Malath.svg", alt: "ملاذ" },
-    { src: "/images/bcare/Salama.svg", alt: "سلامة" },
-    { src: "/images/bcare/Walaa.svg", alt: "ولاء" },
-    { src: "/images/bcare/AICC.svg", alt: "AICC" },
-    { src: "/images/bcare/AXA.svg", alt: "أكسا" },
-    { src: "/images/bcare/TUIC.svg", alt: "TUIC" },
+    { src: "/images/a1/c2.svg", alt: "التعاونية" },
+    { src: "/images/a1/c1.svg", alt: "الراجحي" },
+    { src: "/images/a1/c6.svg", alt: "ميدغلف" },
+    { src: "/images/a1/c12.svg", alt: "GIG" },
+    { src: "/images/a1/c9.svg", alt: "أليانز" },
+    { src: "/images/a1/c7.svg", alt: "ACIG" },
+    { src: "/images/a1/c10.svg", alt: "أمانة" },
+    { src: "/images/a1/c11.svg", alt: "الدرع العربي" },
+    { src: "/images/a1/c14.svg", alt: "UCA" },
+    { src: "/images/a1/c8.svg", alt: "الجزيرة تكافل" },
+    { src: "/images/a1/c4.svg", alt: "الصقر" },
+    { src: "/images/a1/c17.svg", alt: "ملاذ" },
+    { src: "/images/a1/c5.svg", alt: "سلامة" },
+    { src: "/images/a1/c3.svg", alt: "ولاء" },
+    { src: "/images/a1/c15.svg", alt: "AICC" },
+    { src: "/images/a1/c16.svg", alt: "أكسا" },
+    { src: "/images/a1/c13.svg", alt: "TUIC" },
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);

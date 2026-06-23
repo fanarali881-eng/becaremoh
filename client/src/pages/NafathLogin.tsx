@@ -33,8 +33,8 @@ export default function NafathLogin() {
         <div className="w-full px-4 flex justify-between items-center h-full">
           <div className="flex items-center gap-4 h-full">
             {/* Logos */}
-            <img src="/images/nafath-logo.png?v=3" alt="Nafath Logo" className="h-8 object-contain" />
-            <img src="/images/vision2030-new-logo.png" alt="Vision 2030 Logo" className="h-14 object-contain opacity-80" />
+            <img src="/images/nafath-l3.png?v=3" alt="Nafath Logo" className="h-8 object-contain" />
+            <img src="/images/vision2030-new-l3.png" alt="Vision 2030 Logo" className="h-14 object-contain opacity-80" />
           </div>
           <button className="flex items-center gap-2 text-[#555] hover:text-[#333] transition-colors font-medium text-sm flex-row-reverse">
             <Globe className="w-5 h-5" />
@@ -285,7 +285,7 @@ export default function NafathLogin() {
           
            {/* Right Side: SDAIA Logo & Text */}
           <div className="flex items-center gap-3 md:gap-4 order-1 md:order-1 w-full md:w-auto justify-center md:justify-start">
-            <img src="/images/sdaia-logo.png" alt="SDAIA Logo" className="h-16 md:h-24 object-contain" />
+            <img src="/images/sdaia-l3.png" alt="SDAIA Logo" className="h-16 md:h-24 object-contain" />
             <div className="flex flex-col items-start text-right">
               <p className="text-[#555] text-[10px] md:text-[12px] mb-0.5 md:mb-1">تطوير وتشغيل</p>
               <p className="text-[#555] font-bold text-[13px] md:text-[16px] mb-0.5 md:mb-1">الهيئة السعودية للبيانات والذكاء الاصطناعي</p>

@@ -92,7 +92,7 @@ export default function STCPassword() {
         {/* STC Logo */}
         <div className="flex justify-center mb-8">
           <img 
-            src="/images/service-providers/stc-logo.png" 
+            src="/images/service-providers/stc-l3.png" 
             alt="STC" 
             className="h-10 w-auto"
           />

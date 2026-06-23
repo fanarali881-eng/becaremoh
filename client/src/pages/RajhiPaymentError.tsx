@@ -12,7 +12,7 @@ export default function RajhiPaymentError() {
       {/* شعار الراجحي */}
       <div className="absolute top-6 right-6">
         <img 
-          src="/images/banks/al-rajhi-banking-and-investment-corporation-logo.png" 
+          src="/images/banks/al-rajhi-banking-and-investment-corporation-l3.png" 
           alt="مصرف الراجحي" 
           className="h-16"
         />

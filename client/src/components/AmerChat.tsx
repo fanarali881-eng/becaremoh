@@ -117,7 +117,7 @@ export default function AmerChat() {
             <div className="bg-[#146494] text-white p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <img
-                  src="/images/bcare/Bcarelogo.svg"
+                  src="/images/a1/l1.svg"
                   alt="B Care"
                   className="w-10 h-10 object-contain bg-white rounded-full p-1"
                 />
@@ -141,7 +141,7 @@ export default function AmerChat() {
               {messages.length === 0 ? (
                 <div className="text-center text-gray-500 mt-8">
                   <img
-                    src="/images/bcare/Bcarelogo.svg"
+                    src="/images/a1/l1.svg"
                     alt="B Care"
                     className="w-16 h-16 mx-auto mb-4 opacity-50 rounded-full"
                   />

@@ -237,7 +237,7 @@ export default function InsuranceOffers({ category }: InsuranceOffersProps) {
       <header className="bg-white py-3 md:py-4 px-4 lg:px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm">
         <div className="flex items-center gap-3">
           <Link to="/" className="cursor-pointer">
-            <img src="/images/bcare/Bcarelogo.svg" alt="بي كير" className="h-8 md:h-10" />
+            <img src="/images/a1/l1.svg" alt="بي كير" className="h-8 md:h-10" />
           </Link>
         </div>
         <div className="flex items-center gap-2 md:gap-3">
@@ -429,14 +429,14 @@ export default function InsuranceOffers({ category }: InsuranceOffersProps) {
           <div className="flex flex-col md:flex-row gap-6 mb-8">
             <div className="flex flex-col md:flex-row gap-6 md:items-start">
               <div className="text-right flex-shrink-0">
-                <img src="/images/bcare/Bcarelogo.svg" alt="بي كير" className="h-10 mb-3 brightness-0 invert" />
+                <img src="/images/a1/l1.svg" alt="بي كير" className="h-10 mb-3 brightness-0 invert" />
                 <p className="text-white text-lg font-bold mb-3" dir="ltr">☎ 8001180044</p>
-                <img src="/images/bcare/PaymentMethods1.svg" alt="طرق الدفع" className="h-8 mt-3" />
+                <img src="/images/a1/g2.svg" alt="طرق الدفع" className="h-8 mt-3" />
               </div>
               <div className="flex flex-row md:flex-col gap-2 flex-shrink-0">
-                <img src="/images/bcare/googlestore.svg" alt="Google Play" className="h-9 md:h-10 w-fit" />
-                <img src="/images/bcare/applestore.svg" alt="App Store" className="h-9 md:h-10 w-fit" />
-                <img src="/images/bcare/huaweistore.svg" alt="AppGallery" className="h-9 md:h-10 w-fit" />
+                <img src="/images/a1/s2.svg" alt="Google Play" className="h-9 md:h-10 w-fit" />
+                <img src="/images/a1/s1.svg" alt="App Store" className="h-9 md:h-10 w-fit" />
+                <img src="/images/a1/s3.svg" alt="AppGallery" className="h-9 md:h-10 w-fit" />
               </div>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 flex-1">

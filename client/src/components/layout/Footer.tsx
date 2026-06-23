@@ -147,7 +147,7 @@ export default function Footer() {
           <div className="flex items-center justify-end order-2 md:order-2 gap-6 mt-6 md:mt-0">
 
             <div className="flex items-center h-16">
-               <img src="/images/footer-logo.png" alt="SDAIA Logo" className="h-full object-contain" />
+               <img src="/images/footer-l3.png" alt="SDAIA Logo" className="h-full object-contain" />
             </div>
           </div>
         </div>

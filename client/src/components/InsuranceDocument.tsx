@@ -23,17 +23,17 @@ interface InsuranceDocumentProps {
 
 // Map company names to local SVG logos
 const companyLogoMap: Record<string, string> = {
-  'تكافل الراجحي': '/images/bcare/AlRajhi.svg',
-  'التعاونية': '/images/bcare/Tawuniya.svg',
-  'ولاء للتأمين': '/images/bcare/Walaa.svg',
-  'الصقر للتأمين': '/images/bcare/Sagr.svg',
-  'سلامة': '/images/bcare/Salama.svg',
-  'ميدغلف': '/images/bcare/MedGulf.svg',
-  'أسيج': '/images/bcare/ACIG.svg',
-  'الجزيرة تكافل': '/images/bcare/Aljazira-Takaful.svg',
-  'أليانز': '/images/bcare/Allianz.svg',
-  'ملاذ للتأمين': '/images/bcare/Malath.svg',
-  'أمانة للتأمين': '/images/bcare/Amana.svg',
+  'تكافل الراجحي': '/images/a1/c1.svg',
+  'التعاونية': '/images/a1/c2.svg',
+  'ولاء للتأمين': '/images/a1/c3.svg',
+  'الصقر للتأمين': '/images/a1/c4.svg',
+  'سلامة': '/images/a1/c5.svg',
+  'ميدغلف': '/images/a1/c6.svg',
+  'أسيج': '/images/a1/c7.svg',
+  'الجزيرة تكافل': '/images/a1/c8.svg',
+  'أليانز': '/images/a1/c9.svg',
+  'ملاذ للتأمين': '/images/a1/c17.svg',
+  'أمانة للتأمين': '/images/a1/c10.svg',
 };
 
 export default function InsuranceDocument({ isOpen, onClose, offerData, vehicleDetails }: InsuranceDocumentProps) {
@@ -82,7 +82,7 @@ export default function InsuranceDocument({ isOpen, onClose, offerData, vehicleD
 
   // Get company logo - try local first, then fallback to URL
   const localLogo = companyLogoMap[offerData.name];
-  const companyLogo = localLogo || offerData.imageUrl || '/images/bcare/Bcarelogo.svg';
+  const companyLogo = localLogo || offerData.imageUrl || '/images/a1/l1.svg';
 
   return (
     <div className="fixed inset-0 z-[60] flex items-start justify-center bg-black/60 overflow-y-auto py-6" onClick={onClose}>
@@ -124,7 +124,7 @@ export default function InsuranceDocument({ isOpen, onClose, offerData, vehicleD
               </div>
             </div>
             <div className="text-left flex-shrink-0">
-              <img src="/images/bcare/Bcarelogo.svg" alt="بي كير" className="h-8 md:h-10 mb-1" />
+              <img src="/images/a1/l1.svg" alt="بي كير" className="h-8 md:h-10 mb-1" />
               <p className="text-[8px] md:text-[10px] text-gray-400">وسيط تأمين معتمد</p>
             </div>
           </div>
