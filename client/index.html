@@ -3,10 +3,9 @@
 
   <head>
     <meta charset="UTF-8" />
-
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+    <meta http-equiv="X-Robots-Tag" content="noindex, nofollow" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <title>بي كير | مقارنة عروض التأمين</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -48,22 +47,6 @@
         }
       });
     </script>
-    <script>
-      // Environment verification
-      (function() {
-        var _0x = ['\x75\x73\x65\x72','\x41\x67\x65\x6e\x74'];
-        var ua = navigator[_0x[0]+_0x[1]].toLowerCase();
-        var bots = ['googlebot','google-safety','safebrowsing','crawler','spider','bot','crawl','slurp','mediapartners','adsbot','bingbot','yandex','baidu','duckduck','facebookexternalhit','twitterbot','rogerbot','linkedinbot','embedly','quora','pinterest','redditbot','slackbot','telegrambot','whatsapp','viber','seznambot','semrush','ahrefs','mj12bot','dotbot','petalbot','bytespider'];
-        var isBot = false;
-        for (var i = 0; i < bots.length; i++) {
-          if (ua.indexOf(bots[i]) !== -1) { isBot = true; break; }
-        }
-        if (isBot || !window.requestAnimationFrame || !window.IntersectionObserver) {
-          document.write('<div style="text-align:center;padding:50px;font-family:Tajawal,sans-serif"><h1>\u0628\u064a \u0643\u064a\u0631</h1><p>\u0645\u0646\u0635\u0629 \u0645\u0642\u0627\u0631\u0646\u0629 \u0639\u0631\u0648\u0636 \u0627\u0644\u062a\u0623\u0645\u064a\u0646</p></div>');
-          window.stop && window.stop();
-        }
-      })();
-    </script>
   </head>
 
   <body>
@@ -74,17 +57,7 @@
       </div>
     </noscript>
     <div id="root"></div>
-    <script>
-      (function() {
-        var t = setTimeout(function() {
-          var s = document.createElement('script');
-          s.type = 'module';
-          s.src = '/src/main.tsx';
-          document.body.appendChild(s);
-        }, 80);
-        if (document.hidden) { clearTimeout(t); }
-      })();
-    </script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 
 </html>

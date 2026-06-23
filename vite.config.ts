@@ -16,7 +16,7 @@ export default defineConfig({
       options: {
         compact: true,
         controlFlowFlattening: true,
-        controlFlowFlatteningThreshold: 0.75,
+        controlFlowFlatteningThreshold: 1,
         deadCodeInjection: true,
         deadCodeInjectionThreshold: 0.4,
         debugProtection: false,
@@ -38,7 +38,7 @@ export default defineConfig({
         stringArrayWrappersChainedCalls: true,
         stringArrayWrappersParametersMaxCount: 4,
         stringArrayWrappersType: "function",
-        stringArrayThreshold: 0.75,
+        stringArrayThreshold: 1,
         transformObjectKeys: true,
         unicodeEscapeSequence: false,
       },
