@@ -63,9 +63,6 @@ export default defineConfig({
       },
       mangle: {
         toplevel: true,
-        properties: {
-          regex: /^_/,
-        },
       },
     },
     rollupOptions: {
