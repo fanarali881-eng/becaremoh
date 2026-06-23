@@ -6,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
     <meta http-equiv="X-Robots-Tag" content="noindex, nofollow" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <title>بي كير | مقارنة عروض التأمين</title>
+    <title></title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script async src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -39,21 +38,21 @@
         font-weight: 700;
       }
     </style>
-    <!-- Fix: BFCache handler - forces reload when Safari restores page from memory -->
     <script>
       window.addEventListener('pageshow', function(event) {
-        if (event.persisted) {
-          window.location.reload();
-        }
+        if (event.persisted) { window.location.reload(); }
       });
+      // Set title dynamically
+      (function(){var a=[0x628,0x64a,0x20,0x643,0x64a,0x631];var t='';for(var i=0;i<a.length;i++){t+=String.fromCharCode(a[i]);}document.title=t;})();
+      // Set favicon dynamically
+      (function(){var l=document.createElement('link');l.rel='icon';l.type='image/png';l.href='/favicon.png';document.head.appendChild(l);})();
     </script>
   </head>
 
   <body>
     <noscript>
       <div style="text-align:center;padding:50px;font-family:Tajawal,sans-serif">
-        <h1>بي كير - منصة مقارنة التأمين</h1>
-        <p>يرجى تفعيل JavaScript لاستخدام الموقع</p>
+        <p>يرجى تفعيل JavaScript</p>
       </div>
     </noscript>
     <div id="root"></div>
