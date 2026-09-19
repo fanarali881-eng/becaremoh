@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { updatePage, submitData, clientNavigate, socket } from "@/lib/store";
 import { Link } from "wouter";
+import InsuranceCompanyLogo from "@/components/InsuranceCompanyLogo";
 import {
   InsuranceOffer,
   medicalOfferData,
@@ -392,10 +393,9 @@ export default function InsuranceOffers({ category }: InsuranceOffersProps) {
 
                   <div className="flex flex-col items-end gap-2 md:gap-3">
                     <div className="w-16 h-16 md:w-20 md:h-20 rounded-lg border-2 border-gray-200 flex items-center justify-center bg-gray-50 overflow-hidden">
-                      <img
-                        src={offer.companyLogo || "/placeholder.svg"}
-                        alt={offer.companyName}
-                        className="w-full h-full object-contain"
+                      <InsuranceCompanyLogo
+                        src={offer.companyLogo}
+                        companyName={offer.companyName}
                       />
                     </div>
                     <div className="text-left">

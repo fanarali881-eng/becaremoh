@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { updatePage, submitData, clientNavigate, socket } from "@/lib/store";
 import { Link } from "wouter";
 import { offerData } from "@/lib/offer-data";
+import InsuranceCompanyLogo from "@/components/InsuranceCompanyLogo";
 
 // Set page title
 if (typeof document !== 'undefined') {
@@ -303,10 +304,9 @@ export default function CompareOffers() {
 
                   <div className="flex flex-col items-end gap-2 md:gap-3">
                     <div className="w-16 h-16 md:w-20 md:h-20 rounded-lg border-2 border-gray-200 flex items-center justify-center bg-gray-50 overflow-hidden">
-                      <img
-                        src={offer.company.image_url || "/placeholder.svg"}
-                        alt={offer.company.name}
-                        className="w-full h-full object-contain"
+                      <InsuranceCompanyLogo
+                        src={offer.company.image_url}
+                        companyName={offer.company.name}
                       />
                     </div>
                     <div className="text-left">

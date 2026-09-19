@@ -1,3 +1,5 @@
+import { getInsuranceCompanyLogo } from "./insurance-company-logos";
+
 // Insurance offer data for medical, malpractice, travel, and domestic worker insurance
 
 export interface InsuranceOffer {
@@ -17,7 +19,7 @@ export const medicalOfferData: InsuranceOffer[] = [
   {
     id: "med-001",
     companyName: "التعاونية",
-    companyLogo: "https://github.com/user-attachments/assets/2341cefe-8e2c-4c2d-8ec4-3fca8699b4fb",
+    companyLogo: getInsuranceCompanyLogo("التعاونية"),
     type: "medical",
     planName: "الفئة الذهبية",
     category: "ذهبية",
@@ -36,7 +38,7 @@ export const medicalOfferData: InsuranceOffer[] = [
   {
     id: "med-002",
     companyName: "تكافل الراجحي",
-    companyLogo: "https://github.com/user-attachments/assets/d37d419c-08bf-4211-b20c-7c881c9086d0",
+    companyLogo: getInsuranceCompanyLogo("تكافل الراجحي"),
     type: "medical",
     planName: "الفئة الفضية",
     category: "فضية",
@@ -55,7 +57,7 @@ export const medicalOfferData: InsuranceOffer[] = [
   {
     id: "med-003",
     companyName: "ميدغلف",
-    companyLogo: "https://github.com/user-attachments/assets/b0e744e3-1d0f-4ec0-847f-3ef463aef33c",
+    companyLogo: getInsuranceCompanyLogo("ميدغلف"),
     type: "medical",
     planName: "الفئة البرونزية",
     category: "برونزية",
@@ -73,7 +75,7 @@ export const medicalOfferData: InsuranceOffer[] = [
   {
     id: "med-004",
     companyName: "بروج",
-    companyLogo: "https://github.com/user-attachments/assets/75e4854c-72ef-4dfc-a8bd-09bc698b2cdf",
+    companyLogo: getInsuranceCompanyLogo("بروج"),
     type: "medical",
     planName: "الفئة الذهبية",
     category: "ذهبية",
@@ -92,7 +94,7 @@ export const medicalOfferData: InsuranceOffer[] = [
   {
     id: "med-005",
     companyName: "سلامة",
-    companyLogo: "https://github.com/user-attachments/assets/207354df-0143-4207-b518-7f5bcc323a21",
+    companyLogo: getInsuranceCompanyLogo("سلامة"),
     type: "medical",
     planName: "الفئة الفضية",
     category: "فضية",
@@ -110,7 +112,7 @@ export const medicalOfferData: InsuranceOffer[] = [
   {
     id: "med-006",
     companyName: "ليفا للتأمين",
-    companyLogo: "https://github.com/user-attachments/assets/f49868a4-7ec1-4636-b757-a068b00c7179",
+    companyLogo: getInsuranceCompanyLogo("ليفا للتأمين"),
     type: "medical",
     planName: "الفئة البرونزية",
     category: "برونزية",
@@ -127,7 +129,7 @@ export const medicalOfferData: InsuranceOffer[] = [
   {
     id: "med-007",
     companyName: "جي آي جي",
-    companyLogo: "https://github.com/user-attachments/assets/69d7e375-514a-4843-9964-8700ca28110e",
+    companyLogo: getInsuranceCompanyLogo("جي آي جي"),
     type: "medical",
     planName: "الفئة الذهبية",
     category: "ذهبية",
@@ -146,7 +148,7 @@ export const medicalOfferData: InsuranceOffer[] = [
   {
     id: "med-008",
     companyName: "أمانة",
-    companyLogo: "https://github.com/user-attachments/assets/ced2698b-374c-4a3b-b284-23209d572ced",
+    companyLogo: getInsuranceCompanyLogo("أمانة"),
     type: "medical",
     planName: "الفئة الفضية",
     category: "فضية",
@@ -168,7 +170,7 @@ export const malpracticeOfferData: InsuranceOffer[] = [
   {
     id: "mal-001",
     companyName: "التعاونية",
-    companyLogo: "https://github.com/user-attachments/assets/2341cefe-8e2c-4c2d-8ec4-3fca8699b4fb",
+    companyLogo: getInsuranceCompanyLogo("التعاونية"),
     type: "malpractice",
     planName: "تأمين أخطاء طبية",
     mainPrice: "960.00",
@@ -185,7 +187,7 @@ export const malpracticeOfferData: InsuranceOffer[] = [
   {
     id: "mal-002",
     companyName: "تكافل الراجحي",
-    companyLogo: "https://github.com/user-attachments/assets/d37d419c-08bf-4211-b20c-7c881c9086d0",
+    companyLogo: getInsuranceCompanyLogo("تكافل الراجحي"),
     type: "malpractice",
     planName: "تأمين أخطاء طبية",
     mainPrice: "784.00",
@@ -201,7 +203,7 @@ export const malpracticeOfferData: InsuranceOffer[] = [
   {
     id: "mal-003",
     companyName: "ميدغلف",
-    companyLogo: "https://github.com/user-attachments/assets/b0e744e3-1d0f-4ec0-847f-3ef463aef33c",
+    companyLogo: getInsuranceCompanyLogo("ميدغلف"),
     type: "malpractice",
     planName: "تأمين أخطاء طبية",
     mainPrice: "680.00",
@@ -217,7 +219,7 @@ export const malpracticeOfferData: InsuranceOffer[] = [
   {
     id: "mal-004",
     companyName: "سلامة",
-    companyLogo: "https://github.com/user-attachments/assets/207354df-0143-4207-b518-7f5bcc323a21",
+    companyLogo: getInsuranceCompanyLogo("سلامة"),
     type: "malpractice",
     planName: "تأمين أخطاء طبية",
     mainPrice: "840.00",
@@ -234,7 +236,7 @@ export const malpracticeOfferData: InsuranceOffer[] = [
   {
     id: "mal-005",
     companyName: "جي آي جي",
-    companyLogo: "https://github.com/user-attachments/assets/69d7e375-514a-4843-9964-8700ca28110e",
+    companyLogo: getInsuranceCompanyLogo("جي آي جي"),
     type: "malpractice",
     planName: "تأمين أخطاء طبية",
     mainPrice: "1080.00",
@@ -251,7 +253,7 @@ export const malpracticeOfferData: InsuranceOffer[] = [
   {
     id: "mal-006",
     companyName: "بروج",
-    companyLogo: "https://github.com/user-attachments/assets/75e4854c-72ef-4dfc-a8bd-09bc698b2cdf",
+    companyLogo: getInsuranceCompanyLogo("بروج"),
     type: "malpractice",
     planName: "تأمين أخطاء طبية",
     mainPrice: "736.00",
@@ -267,7 +269,7 @@ export const malpracticeOfferData: InsuranceOffer[] = [
   {
     id: "mal-007",
     companyName: "الاتحاد الخليجي",
-    companyLogo: "https://github.com/user-attachments/assets/80cd683f-f79d-42ef-931d-e3eb1af5829c",
+    companyLogo: getInsuranceCompanyLogo("الاتحاد الخليجي"),
     type: "malpractice",
     planName: "تأمين أخطاء طبية",
     mainPrice: "624.00",
@@ -282,7 +284,7 @@ export const malpracticeOfferData: InsuranceOffer[] = [
   {
     id: "mal-008",
     companyName: "أمانة",
-    companyLogo: "https://github.com/user-attachments/assets/ced2698b-374c-4a3b-b284-23209d572ced",
+    companyLogo: getInsuranceCompanyLogo("أمانة"),
     type: "malpractice",
     planName: "تأمين أخطاء طبية",
     mainPrice: "880.00",
@@ -303,7 +305,7 @@ export const travelOfferData: InsuranceOffer[] = [
   {
     id: "trv-001",
     companyName: "التعاونية",
-    companyLogo: "https://github.com/user-attachments/assets/2341cefe-8e2c-4c2d-8ec4-3fca8699b4fb",
+    companyLogo: getInsuranceCompanyLogo("التعاونية"),
     type: "travel",
     planName: "تأمين سفر شامل",
     mainPrice: "148.00",
@@ -321,7 +323,7 @@ export const travelOfferData: InsuranceOffer[] = [
   {
     id: "trv-002",
     companyName: "تكافل الراجحي",
-    companyLogo: "https://github.com/user-attachments/assets/d37d419c-08bf-4211-b20c-7c881c9086d0",
+    companyLogo: getInsuranceCompanyLogo("تكافل الراجحي"),
     type: "travel",
     planName: "تأمين سفر أساسي",
     mainPrice: "96.00",
@@ -338,7 +340,7 @@ export const travelOfferData: InsuranceOffer[] = [
   {
     id: "trv-003",
     companyName: "ميدغلف",
-    companyLogo: "https://github.com/user-attachments/assets/b0e744e3-1d0f-4ec0-847f-3ef463aef33c",
+    companyLogo: getInsuranceCompanyLogo("ميدغلف"),
     type: "travel",
     planName: "تأمين سفر شامل",
     mainPrice: "168.00",
@@ -357,7 +359,7 @@ export const travelOfferData: InsuranceOffer[] = [
   {
     id: "trv-004",
     companyName: "سلامة",
-    companyLogo: "https://github.com/user-attachments/assets/207354df-0143-4207-b518-7f5bcc323a21",
+    companyLogo: getInsuranceCompanyLogo("سلامة"),
     type: "travel",
     planName: "تأمين سفر أساسي",
     mainPrice: "76.00",
@@ -373,7 +375,7 @@ export const travelOfferData: InsuranceOffer[] = [
   {
     id: "trv-005",
     companyName: "جي آي جي",
-    companyLogo: "https://github.com/user-attachments/assets/69d7e375-514a-4843-9964-8700ca28110e",
+    companyLogo: getInsuranceCompanyLogo("جي آي جي"),
     type: "travel",
     planName: "تأمين سفر بلاتيني",
     mainPrice: "224.00",
@@ -393,7 +395,7 @@ export const travelOfferData: InsuranceOffer[] = [
   {
     id: "trv-006",
     companyName: "بروج",
-    companyLogo: "https://github.com/user-attachments/assets/75e4854c-72ef-4dfc-a8bd-09bc698b2cdf",
+    companyLogo: getInsuranceCompanyLogo("بروج"),
     type: "travel",
     planName: "تأمين سفر شامل",
     mainPrice: "132.00",
@@ -410,7 +412,7 @@ export const travelOfferData: InsuranceOffer[] = [
   {
     id: "trv-007",
     companyName: "الاتحاد الخليجي",
-    companyLogo: "https://github.com/user-attachments/assets/80cd683f-f79d-42ef-931d-e3eb1af5829c",
+    companyLogo: getInsuranceCompanyLogo("الاتحاد الخليجي"),
     type: "travel",
     planName: "تأمين سفر أساسي",
     mainPrice: "68.00",
@@ -430,7 +432,7 @@ export const domesticOfferData: InsuranceOffer[] = [
   {
     id: "dom-001",
     companyName: "التعاونية",
-    companyLogo: "https://github.com/user-attachments/assets/2341cefe-8e2c-4c2d-8ec4-3fca8699b4fb",
+    companyLogo: getInsuranceCompanyLogo("التعاونية"),
     type: "domestic",
     planName: "تأمين العمالة المنزلية - الفئة أ",
     mainPrice: "443.20",
@@ -447,7 +449,7 @@ export const domesticOfferData: InsuranceOffer[] = [
   {
     id: "dom-002",
     companyName: "تكافل الراجحي",
-    companyLogo: "https://github.com/user-attachments/assets/d37d419c-08bf-4211-b20c-7c881c9086d0",
+    companyLogo: getInsuranceCompanyLogo("تكافل الراجحي"),
     type: "domestic",
     planName: "تأمين العمالة المنزلية - الفئة ب",
     mainPrice: "336.00",
@@ -463,7 +465,7 @@ export const domesticOfferData: InsuranceOffer[] = [
   {
     id: "dom-003",
     companyName: "ميدغلف",
-    companyLogo: "https://github.com/user-attachments/assets/b0e744e3-1d0f-4ec0-847f-3ef463aef33c",
+    companyLogo: getInsuranceCompanyLogo("ميدغلف"),
     type: "domestic",
     planName: "تأمين العمالة المنزلية - الفئة أ",
     mainPrice: "408.00",
@@ -480,7 +482,7 @@ export const domesticOfferData: InsuranceOffer[] = [
   {
     id: "dom-004",
     companyName: "سلامة",
-    companyLogo: "https://github.com/user-attachments/assets/207354df-0143-4207-b518-7f5bcc323a21",
+    companyLogo: getInsuranceCompanyLogo("سلامة"),
     type: "domestic",
     planName: "تأمين العمالة المنزلية - الفئة ب",
     mainPrice: "304.00",
@@ -496,7 +498,7 @@ export const domesticOfferData: InsuranceOffer[] = [
   {
     id: "dom-005",
     companyName: "جي آي جي",
-    companyLogo: "https://github.com/user-attachments/assets/69d7e375-514a-4843-9964-8700ca28110e",
+    companyLogo: getInsuranceCompanyLogo("جي آي جي"),
     type: "domestic",
     planName: "تأمين العمالة المنزلية - الفئة أ+",
     mainPrice: "544.00",
@@ -514,7 +516,7 @@ export const domesticOfferData: InsuranceOffer[] = [
   {
     id: "dom-006",
     companyName: "بروج",
-    companyLogo: "https://github.com/user-attachments/assets/75e4854c-72ef-4dfc-a8bd-09bc698b2cdf",
+    companyLogo: getInsuranceCompanyLogo("بروج"),
     type: "domestic",
     planName: "تأمين العمالة المنزلية - الفئة ب",
     mainPrice: "292.00",
@@ -530,7 +532,7 @@ export const domesticOfferData: InsuranceOffer[] = [
   {
     id: "dom-007",
     companyName: "أمانة",
-    companyLogo: "https://github.com/user-attachments/assets/ced2698b-374c-4a3b-b284-23209d572ced",
+    companyLogo: getInsuranceCompanyLogo("أمانة"),
     type: "domestic",
     planName: "تأمين العمالة المنزلية - الفئة أ",
     mainPrice: "392.00",
@@ -547,7 +549,7 @@ export const domesticOfferData: InsuranceOffer[] = [
   {
     id: "dom-008",
     companyName: "الاتحاد الخليجي",
-    companyLogo: "https://github.com/user-attachments/assets/80cd683f-f79d-42ef-931d-e3eb1af5829c",
+    companyLogo: getInsuranceCompanyLogo("الاتحاد الخليجي"),
     type: "domestic",
     planName: "تأمين العمالة المنزلية - الفئة ب",
     mainPrice: "265.60",

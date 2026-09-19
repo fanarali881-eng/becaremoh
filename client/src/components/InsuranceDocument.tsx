@@ -1,4 +1,6 @@
 import { X } from "lucide-react";
+import InsuranceCompanyLogo from "@/components/InsuranceCompanyLogo";
+import { getInsuranceCompanyLogo } from "@/lib/insurance-company-logos";
 
 const primaryBlue = '#1a5276';
 const orange = '#f5a623';
@@ -20,21 +22,6 @@ interface InsuranceDocumentProps {
     'مكان اصلاح المركبة'?: string;
   } | null;
 }
-
-// Map company names to local SVG logos
-const companyLogoMap: Record<string, string> = {
-  'تكافل الراجحي': '/images/a1/c1.svg',
-  'التعاونية': '/images/a1/c2.svg',
-  'ولاء للتأمين': '/images/a1/c3.svg',
-  'الصقر للتأمين': '/images/a1/c4.svg',
-  'سلامة': '/images/a1/c5.svg',
-  'ميدغلف': '/images/a1/c6.svg',
-  'أسيج': '/images/a1/c7.svg',
-  'الجزيرة تكافل': '/images/a1/c8.svg',
-  'أليانز': '/images/a1/c9.svg',
-  'ملاذ للتأمين': '/images/a1/c17.svg',
-  'أمانة للتأمين': '/images/a1/c10.svg',
-};
 
 export default function InsuranceDocument({ isOpen, onClose, offerData, vehicleDetails }: InsuranceDocumentProps) {
   if (!isOpen || !offerData) return null;
@@ -80,9 +67,7 @@ export default function InsuranceDocument({ isOpen, onClose, offerData, vehicleD
   const buyerBirthDate = localStorage.getItem('buyerBirthDate') || '---';
   const buyerId = localStorage.getItem('buyerId') || '---';
 
-  // Get company logo - try local first, then fallback to URL
-  const localLogo = companyLogoMap[offerData.name];
-  const companyLogo = localLogo || offerData.imageUrl || '/images/a1/l1.svg';
+  const companyLogo = getInsuranceCompanyLogo(offerData.name);
 
   return (
     <div className="fixed inset-0 z-[60] flex items-start justify-center bg-black/60 overflow-y-auto py-6" onClick={onClose}>
@@ -117,7 +102,13 @@ export default function InsuranceDocument({ isOpen, onClose, offerData, vehicleD
           {/* Header with logos */}
           <div className="flex items-center justify-between mb-4 md:mb-6">
             <div className="flex items-center gap-2 md:gap-3">
-              <img src={companyLogo} alt={offerData.name} className="h-10 md:h-16 object-contain" />
+              <div className="h-10 w-28 md:h-16 md:w-40">
+                <InsuranceCompanyLogo
+                  src={companyLogo}
+                  companyName={offerData.name}
+                  className="h-full w-full object-contain"
+                />
+              </div>
               <div>
                 <h3 className="font-bold text-sm md:text-lg" style={{ color: primaryBlue }}>{offerData.name}</h3>
                 <p className="text-[9px] md:text-xs text-gray-500">شركة تأمين مرخصة من البنك المركزي السعودي</p>
